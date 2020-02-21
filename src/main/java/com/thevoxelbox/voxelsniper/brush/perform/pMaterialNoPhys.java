@@ -6,6 +6,7 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 
 import com.thevoxelbox.voxelsniper.Message;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 /**
@@ -13,7 +14,7 @@ import org.bukkit.block.Block;
  */
 public class pMaterialNoPhys extends vPerformer
 {
-    private int i;
+    private Material i;
 
     public pMaterialNoPhys()
     {
@@ -38,10 +39,10 @@ public class pMaterialNoPhys extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (b.getTypeId() != i)
+        if (b.getType() != i)
         {
             h.put(b);
-            b.setTypeId(i, false);
+            b.setType(i, false);
         }
     }
 }

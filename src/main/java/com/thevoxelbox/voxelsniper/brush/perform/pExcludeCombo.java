@@ -7,7 +7,9 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.util.VoxelList;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -16,8 +18,8 @@ public class pExcludeCombo extends vPerformer
 {
 
     private VoxelList excludeList;
-    private int id;
-    private byte data;
+    private Material id;
+    private BlockData data;
 
     public pExcludeCombo()
     {
@@ -46,10 +48,11 @@ public class pExcludeCombo extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (!excludeList.contains(new int[] {b.getTypeId(), b.getData()}))
+        if (!excludeList.contains(b.getBlockData()))
         {
             h.put(b);
-            b.setTypeIdAndData(id, data, true);
+            b.setType(id);
+            b.setBlockData(data, true);
         }
     }
 }

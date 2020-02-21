@@ -4,7 +4,7 @@
 
     <groupId>com.thevoxelbox</groupId>
     <artifactId>VoxelSniper</artifactId>
-    <version>5.171.0-SNAPSHOT</version>
+    <version>5.171.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>VoxelSniper</name>
@@ -60,13 +60,24 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R8-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.13-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.martiansoftware</groupId>
@@ -77,11 +88,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,10 +133,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.8.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <release>8</release>
                 </configuration>
             </plugin>
 
@@ -191,8 +202,15 @@
                                     <exclude>org.bukkit:bukkit</exclude>
                                     <exclude>junit:junit</exclude>
                                 </excludes>
+                                <includes>
+                                    <include>org.mcstats.*:*</include>
+                                </includes>
                             </artifactSet>
                             <relocations>
+                                <relocation>
+                                    <pattern>org.mcstats</pattern>
+                                    <shadedPattern>com.thevoxelbox.voxelsniper.libs.org.mcstats</shadedPattern>
+                                </relocation>
                                 <relocation>
                                     <pattern>com.martiansoftware</pattern>
                                     <shadedPattern>com.thevoxelbox.voxelsniper.libs.com.martiansoftware</shadedPattern>

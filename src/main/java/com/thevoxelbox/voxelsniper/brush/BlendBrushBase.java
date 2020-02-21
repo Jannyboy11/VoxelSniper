@@ -12,7 +12,7 @@ import org.bukkit.Material;
 @SuppressWarnings("deprecation")
 public abstract class BlendBrushBase extends Brush
 {
-    private static int maxBlockMaterialID;
+    private static int maxBlockMaterialID; //TODO Material's should not have a maximum!
     protected boolean excludeAir = true;
     protected boolean excludeWater = true;
 

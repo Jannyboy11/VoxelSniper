@@ -24,11 +24,13 @@ import java.util.Set;
  */
 public class Undo {
 
+    //TODO find new materials, add missing materials
     private static final Set<Material> FALLING_MATERIALS = EnumSet.of(
             Material.WATER,
             Material.STATIONARY_WATER,
             Material.LAVA,
             Material.STATIONARY_LAVA);
+    //TODO find new materials, add missing materials
     private static final Set<Material> FALLOFF_MATERIALS = EnumSet.of(
             Material.SAPLING,
             Material.BED_BLOCK,
@@ -138,6 +140,8 @@ public class Undo {
      * @param blockState
      */
     private void updateSpecialBlocks(BlockState blockState) {
+        //TODO java 14 pattern matching
+
         BlockState currentState = blockState.getBlock().getState();
         if (blockState instanceof BrewingStand && currentState instanceof BrewingStand) {
             ((BrewingStand) currentState).getInventory().setContents(((BrewingStand) blockState).getInventory().getContents());

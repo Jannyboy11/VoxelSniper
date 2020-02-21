@@ -20,7 +20,7 @@ public final class MetricsManager
     private static int snipesDone = 0;
     private static long snipeCounterInitTimeStamp = 0;
     private static MetricsManager instance;
-    private static Map<String, Integer> brushUsageCounter = Maps.newHashMap();
+    private static Map<String, Integer> brushUsageCounter = new HashMap<>();
 
     private MetricsManager()
     {

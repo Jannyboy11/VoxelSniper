@@ -7,6 +7,7 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 import com.thevoxelbox.voxelsniper.Message;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -14,7 +15,7 @@ import org.bukkit.block.Block;
 public class pInk extends vPerformer
 {
 
-    private byte d;
+    private BlockData d;
 
     public pInk()
     {
@@ -40,6 +41,6 @@ public class pInk extends vPerformer
     public void perform(Block b)
     {
         h.put(b);
-        b.setData(d);
+        b.setBlockData(d);
     }
 }

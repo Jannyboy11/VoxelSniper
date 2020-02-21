@@ -8,6 +8,7 @@ import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.util.VoxelList;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -16,7 +17,7 @@ public class pIncludeInk extends vPerformer
 {
 
     private VoxelList includeList;
-    private byte data;
+    private BlockData data;
 
     public pIncludeInk()
     {
@@ -43,10 +44,10 @@ public class pIncludeInk extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (includeList.contains(new int[]{b.getTypeId(), b.getData()}))
+        if (includeList.contains(b.getBlockData()))
         {
             h.put(b);
-            b.setData(data);
+            b.setBlockData(data);
         }
     }
 }

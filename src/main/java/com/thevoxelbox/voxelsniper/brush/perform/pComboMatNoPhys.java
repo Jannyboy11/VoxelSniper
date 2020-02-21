@@ -6,7 +6,9 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 
 import com.thevoxelbox.voxelsniper.Message;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -14,9 +16,9 @@ import org.bukkit.block.Block;
 public class pComboMatNoPhys extends vPerformer
 {
 
-    private byte d;
-    private int i;
-    private int ir;
+    private BlockData d;
+    private Material i;
+    private Material ir;
 
     public pComboMatNoPhys()
     {
@@ -45,10 +47,11 @@ public class pComboMatNoPhys extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (b.getTypeId() == ir)
+        if (b.getType() == ir)
         {
             h.put(b);
-            b.setTypeIdAndData(i, d, false);
+            b.setType(i);
+            b.setBlockData(d, false);
         }
     }
 

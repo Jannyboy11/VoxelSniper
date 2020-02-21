@@ -2,6 +2,7 @@ package com.thevoxelbox.voxelsniper;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 
 /**
  *
@@ -89,7 +90,7 @@ public class Message
     @SuppressWarnings("deprecation")
     public void replace()
     {
-        snipeData.sendMessage(ChatColor.AQUA + "Replace Material: " + ChatColor.RED + snipeData.getReplaceId() + ChatColor.GRAY + " (" + Material.getMaterial(snipeData.getReplaceId()).toString() + ")");
+        snipeData.sendMessage(ChatColor.AQUA + "Replace Material: " + ChatColor.RED + snipeData.getReplaceId());
     }
 
     /**
@@ -142,7 +143,7 @@ public class Message
     @SuppressWarnings("deprecation")
     public void voxel()
     {
-        snipeData.sendMessage(ChatColor.GOLD + "Voxel: " + ChatColor.RED + snipeData.getVoxelId() + ChatColor.GRAY + " (" + Material.getMaterial(snipeData.getVoxelId()).toString() + ")");
+        snipeData.sendMessage(ChatColor.GOLD + "Voxel: " + ChatColor.RED + snipeData.getVoxelId());
     }
 
     /**
@@ -161,14 +162,9 @@ public class Message
             returnValueBuilder.append("Block Types Selected: ");
             returnValueBuilder.append(ChatColor.AQUA);
 
-            for (int[] valuePair : snipeData.getVoxelList().getList())
+            for (BlockData valuePair : snipeData.getVoxelList())
             {
-                returnValueBuilder.append(valuePair[0]);
-                if (valuePair[1] != -1)
-                {
-                    returnValueBuilder.append(":");
-                    returnValueBuilder.append(valuePair[1]);
-                }
+                returnValueBuilder.append(valuePair.getAsString(false));
                 returnValueBuilder.append(" ");
             }
 

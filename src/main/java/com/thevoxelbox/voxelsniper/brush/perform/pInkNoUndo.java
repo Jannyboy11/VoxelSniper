@@ -7,6 +7,7 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 import com.thevoxelbox.voxelsniper.Message;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -14,7 +15,7 @@ import org.bukkit.block.Block;
 public class pInkNoUndo extends vPerformer
 {
 
-    private byte d;
+    private BlockData d;
 
     public pInkNoUndo()
     {
@@ -39,9 +40,9 @@ public class pInkNoUndo extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (b.getData() != d)
+        if (b.getBlockData().matches(d))
         {
-            b.setData(d);
+            b.setBlockData(d);
         }
     }
 }

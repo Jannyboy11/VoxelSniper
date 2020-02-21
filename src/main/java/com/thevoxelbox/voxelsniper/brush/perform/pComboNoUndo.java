@@ -6,7 +6,9 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 
 import com.thevoxelbox.voxelsniper.Message;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -14,8 +16,8 @@ import org.bukkit.block.Block;
 public class pComboNoUndo extends vPerformer
 {
 
-    private int i;
-    private byte d;
+    private Material i;
+    private BlockData d;
 
     public pComboNoUndo()
     {
@@ -42,9 +44,10 @@ public class pComboNoUndo extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (b.getTypeId() != i || b.getData() != d)
+        if (b.getType() != i || !b.getBlockData().matches(d))
         {
-            b.setTypeIdAndData(i, d, true);
+            b.setType(i);
+            b.setBlockData(d, true);
         }
     }
 }

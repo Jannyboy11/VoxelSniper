@@ -1,7 +1,9 @@
 package com.thevoxelbox.voxelsniper.util;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author MikeMatrix
@@ -9,11 +11,11 @@ import org.bukkit.block.Block;
 public class BlockWrapper
 {
 
-    private int id;
+    private Material id;
     private int x;
     private int y;
     private int z;
-    private byte data;
+    private BlockData data;
     private World world;
 
     /**
@@ -22,18 +24,18 @@ public class BlockWrapper
     @SuppressWarnings("deprecation")
 	public BlockWrapper(final Block block)
     {
-        this.setId(block.getTypeId());
+        this.setId(block.getType());
         this.setX(block.getX());
         this.setY(block.getY());
         this.setZ(block.getZ());
-        this.setData(block.getData());
+        this.setData(block.getBlockData());
         this.setWorld(block.getWorld());
     }
 
     /**
      * @return the data
      */
-    public final byte getData()
+    public final BlockData getData()
     {
         return this.data;
     }
@@ -41,7 +43,7 @@ public class BlockWrapper
     /**
      * @return the id
      */
-    public final int getId()
+    public final Material getId()
     {
         return this.id;
     }
@@ -82,7 +84,7 @@ public class BlockWrapper
      * @param data
      *         the data to set
      */
-    public final void setData(final byte data)
+    public final void setData(final BlockData data)
     {
         this.data = data;
     }
@@ -91,7 +93,7 @@ public class BlockWrapper
      * @param id
      *         the id to set
      */
-    public final void setId(final int id)
+    public final void setId(final Material id)
     {
         this.id = id;
     }

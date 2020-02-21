@@ -6,7 +6,9 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 
 import com.thevoxelbox.voxelsniper.Message;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -14,8 +16,8 @@ import org.bukkit.block.Block;
 public class pMatInk extends vPerformer
 {
 
-    private int i;
-    private byte dr;
+    private Material i;
+    private BlockData dr;
 
     public pMatInk()
     {
@@ -42,10 +44,10 @@ public class pMatInk extends vPerformer
 	@Override
     public void perform(Block b)
     {
-        if (b.getData() == dr)
+        if (b.getBlockData().matches(dr))
         {
             h.put(b);
-            b.setTypeId(i, true);
+            b.setType(i, true);
         }
     }
 

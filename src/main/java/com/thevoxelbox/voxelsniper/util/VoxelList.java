@@ -1,52 +1,26 @@
 package com.thevoxelbox.voxelsniper.util;
 
 import com.google.common.collect.ImmutableList;
-import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Container class for multiple ID/Datavalue pairs.
  */
-public class VoxelList
+public class VoxelList implements Iterable<BlockData>
 {
 
-    private static final BlockData AIR = Material.AIR.createBlockData();
-
-    private List<BlockData[]> valuePairs = new ArrayList<BlockData[]>();
+    private Set<BlockData> valuePairs = new LinkedHashSet<BlockData>(); //LinkedHashSet because order is important for getList
 
     /**
      * Adds the specified id, data value pair to the VoxelList. A data value of -1 will operate on all data values of that id.
      * 
      * @param i
      */
-    public void add(BlockData[] i)
+    public void add(BlockData i)
     {
-        if (i[1] == AIR)
-        {
-            if (!valuePairs.contains(i))
-            {
-                for (Iterator<BlockData[]> it = valuePairs.iterator(); it.hasNext(); )
-                {
-                    BlockData[] in = it.next();
-                    if (in[0] == i[0])
-                    {
-                        it.remove();
-                    }
-                }
-                valuePairs.add(i);
-            }
-        }
-        else
-        {
-            if (!valuePairs.contains(i))
-            {
-                valuePairs.add(i);
-            }
-        }
+        valuePairs.add(i);
     }
 
     /**
@@ -55,49 +29,18 @@ public class VoxelList
      * @param i
      * @return true if this list contained the specified element
      */
-    public boolean removeValue(final BlockData[] i)
+    public boolean removeValue(final BlockData i)
     {
-        if (valuePairs.isEmpty())
-        {
-            return false;
-        }
-        else
-        {
-            boolean ret = false;
-            if (i[1] == -1)
-            {
-                for (Iterator<int[]> it = valuePairs.iterator(); it.hasNext(); )
-                {
-                    int[] in = it.next();
-                    if (in[0] == i[0])
-                    {
-                        it.remove();
-                        ret = true;
-                    }
-                }
-            }
-            else
-            {
-                ret = valuePairs.remove(i);
-            }
-            return ret;
-        }
+        return valuePairs.remove(i);
     }
 
     /**
      * @param i
      * @return true if this list contains the specified element
      */
-    public boolean contains(final BlockData[] i)
+    public boolean contains(final BlockData blockData)
     {
-        for (BlockData[] in : valuePairs)
-        {
-            if (in[0].matches(i[0]) && (in[1] == i[1] || in[1] == AIR))
-            {
-                return true;
-            }
-        }
-        return false;
+        return valuePairs.contains(blockData);
     }
 
     /**
@@ -123,10 +66,13 @@ public class VoxelList
      *
      * @return defensive copy of the List with pairs
      */
-    public List<int[]> getList()
+    public List<BlockData> getList()
     {
         return ImmutableList.copyOf(valuePairs);
     }
 
-
+    @Override
+    public Iterator<BlockData> iterator() {
+        return valuePairs.iterator();
+    }
 }

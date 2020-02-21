@@ -3,6 +3,7 @@ package com.thevoxelbox.voxelsniper.brush.perform;
 import org.bukkit.block.Block;
 
 import com.thevoxelbox.voxelsniper.Message;
+import org.bukkit.block.data.BlockData;
 
 /**
  * @author Voxel
@@ -10,7 +11,7 @@ import com.thevoxelbox.voxelsniper.Message;
 public class pInkNoPhys extends vPerformer
 {
 
-    private byte d;
+    private BlockData d;
 
     public pInkNoPhys()
     {
@@ -36,6 +37,6 @@ public class pInkNoPhys extends vPerformer
     public void perform(Block b)
     {
         h.put(b);
-        b.setData(d, false);
+        b.setBlockData(d, false);
     }
 }
