@@ -6,8 +6,9 @@ import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Undo;
 
-import org.bukkit.ChatColor;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  *
@@ -19,11 +20,11 @@ public class StampBrush extends Brush
      */
     protected class BlockWrapper
     {
-        public int id;
+        public Material id;
         public int x;
         public int y;
         public int z;
-        public byte d;
+        public BlockData d;
 
         /**
          * @param b
@@ -34,8 +35,8 @@ public class StampBrush extends Brush
         @SuppressWarnings("deprecation")
 		public BlockWrapper(final Block b, final int blx, final int bly, final int blz)
         {
-            this.id = b.getTypeId();
-            this.d = b.getData();
+            this.id = b.getType();
+            this.d = b.getBlockData();
             this.x = blx;
             this.y = bly;
             this.z = blz;
@@ -80,9 +81,10 @@ public class StampBrush extends Brush
      *
      * @return
      */
-    protected final boolean falling(final int id)
+    protected static final boolean falling(final Material id)
     {
-        return (id > 7 && id < 14);
+        //return (id > 7 && id < 14);
+        return id.hasGravity();
     }
 
     /**
@@ -90,39 +92,55 @@ public class StampBrush extends Brush
      *
      * @return
      */
-    protected final boolean fallsOff(final int id)
+    protected static final boolean fallsOff(final Material id)
     {
+        if (Tag.FLOWERS.isTagged(id)) return true;
+        if (Tag.FLOWER_POTS.isTagged(id)) return true;
+        if (Tag.SAPLINGS.isTagged(id)) return true;
+        if (Tag.BANNERS.isTagged(id)) return true;
+        if (Tag.SIGNS.isTagged(id)) return true;
+        if (Tag.BUTTONS.isTagged(id)) return true;
+        if (Tag.CARPETS.isTagged(id)) return true;
+        if (Tag.CROPS.isTagged(id)) return true;
+        if (Tag.DOORS.isTagged(id)) return true;
+        if (Tag.RAILS.isTagged(id)) return true;
+        if (Tag.UNDERWATER_BONEMEALS.isTagged(id)) return true;
+        if (Tag.WOODEN_PRESSURE_PLATES.isTagged(id)) return true;
+        if (Tag.BEDS.isTagged(id)) return true;
+        //BUKKIT WHY ARE CHORALS NOT IN THE TAG API YET? //TODO PR @ SpigotMC stash?
+        Tag<Material> choralPlants = Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("chorals"), Material.class);
+        if (choralPlants.isTagged(id)) return true;
+
         switch (id)
         {
-            // 6, 37, 38, 39, 40, 50, 51, 55, 59, 63, 64, 65, 66, 69, 70, 71, 72, 75, 76, 77, 83
-            case (6):
-            case (37):
-            case (38):
-            case (39):
-            case (40):
-            case (50):
-            case (51):
-            case (55):
-            case (59):
-            case (63):
-            case (64):
-            case (65):
-            case (66):
-            case (68):
-            case (69):
-            case (70):
-            case (71):
-            case (72):
-            case (75):
-            case (76):
-            case (77):
-            case (78):
-            case (83):
-            case (93):
-            case (94):
-            default:
-                return false;
+            case BROWN_MUSHROOM:
+            case RED_MUSHROOM:
+            case TORCH:
+            case REDSTONE_TORCH:
+            case FIRE:
+            case REDSTONE_WIRE:
+            case WHEAT_SEEDS:
+            case LADDER:
+            case LEVER:
+            case STONE_PRESSURE_PLATE:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case SNOW:
+            case SUGAR_CANE:
+            case CACTUS:
+            case BAMBOO_SAPLING:
+            case BAMBOO:
+            case REPEATER:
+            case COMPARATOR:
+            case LILY_PAD:
+            case DRAGON_EGG:
+            case CHORUS_FLOWER:
+            case CHORUS_PLANT:
+            case VINE:
+                return true;
         }
+
+        return false;
     }
 
     /**
@@ -133,8 +151,8 @@ public class StampBrush extends Brush
     {
         final Block block = this.clampY(this.getTargetBlock().getX() + cb.x, this.getTargetBlock().getY() + cb.y, this.getTargetBlock().getZ() + cb.z);
         this.undo.put(block);
-        block.setTypeId(cb.id);
-        block.setData(cb.d);
+        block.setType(cb.id);
+        block.setBlockData(cb.d);
     }
 
     /**
@@ -144,11 +162,11 @@ public class StampBrush extends Brush
 	protected final void setBlockFill(final BlockWrapper cb)
     {
         final Block block = this.clampY(this.getTargetBlock().getX() + cb.x, this.getTargetBlock().getY() + cb.y, this.getTargetBlock().getZ() + cb.z);
-        if (block.getTypeId() == 0)
+        if (block.getType().isAir())
         {
             this.undo.put(block);
-            block.setTypeId(cb.id);
-            block.setData(cb.d);
+            block.setType(cb.id);
+            block.setBlockData(cb.d);
         }
     }
 
@@ -189,11 +207,11 @@ public class StampBrush extends Brush
             this.solid.clear();
             for (final BlockWrapper block : this.clone)
             {
-                if (this.fallsOff(block.id))
+                if (fallsOff(block.id))
                 {
                     this.fall.add(block);
                 }
-                else if (this.falling(block.id))
+                else if (falling(block.id))
                 {
                     this.drop.add(block);
                 }
@@ -255,7 +273,7 @@ public class StampBrush extends Brush
                 {
                     this.drop.add(block);
                 }
-                else if (block.id != 0)
+                else if (!block.id.isAir())
                 {
                     this.solid.add(block);
                     this.setBlockFill(block);
@@ -313,7 +331,7 @@ public class StampBrush extends Brush
                 {
                     this.drop.add(block);
                 }
-                else if (block.id != 0)
+                else if (!block.id.isAir())
                 {
                     this.solid.add(block);
                     this.setBlock(block);

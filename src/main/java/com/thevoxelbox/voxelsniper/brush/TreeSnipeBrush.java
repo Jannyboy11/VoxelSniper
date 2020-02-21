@@ -40,7 +40,8 @@ public class TreeSnipeBrush extends Brush
         blockBelow.setType(Material.GRASS);
         this.getWorld().generateTree(targetBlock.getLocation(), this.treeType, undoDelegate);
         Undo undo = undoDelegate.getUndo();
-        blockBelow.setTypeIdAndData(currentState.getTypeId(), currentState.getRawData(), true);
+        blockBelow.setType(currentState.getType(), false);
+        blockBelow.setBlockData(currentState.getBlockData(), true);
         undo.put(blockBelow);
         v.owner().storeUndo(undo);
     }

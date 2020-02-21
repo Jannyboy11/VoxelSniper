@@ -70,6 +70,7 @@ public class StencilBrush extends Brush
             try
             {
                 final DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+                //TODO am I seriously going to have to invent my own save format for VoxelSniper stensils?!
 
                 this.x = in.readShort();
                 this.z = in.readShort();

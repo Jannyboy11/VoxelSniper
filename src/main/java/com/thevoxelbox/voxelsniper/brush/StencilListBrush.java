@@ -86,6 +86,7 @@ public class StencilListBrush extends Brush
             try
             {
                 final DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+                //TODO IDEM
 
                 this.x = in.readShort();
                 this.z = in.readShort();

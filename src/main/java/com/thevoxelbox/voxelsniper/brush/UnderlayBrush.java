@@ -44,20 +44,21 @@ public class UnderlayBrush extends PerformBrush
                             if (!this.allBlocks)
                             { // if the override parameter has not been activated, go to the switch that filters out manmade stuff.
                                 switch (this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z))
-                                {
-                                    case 1:
-                                    case 2:
-                                    case 3:
-                                    case 12:
-                                    case 13:
-                                    case 24:// These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
-                                    case 48:
-                                    case 82:
-                                    case 49:
-                                    case 78:
+                                // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
+                                {   //TODO this is probably incomplete
+                                    case STONE:             //case 1:
+                                    case GRASS:             //case 2:
+                                    case DIRT:              //case 3:
+                                    case SAND:              // case 12:
+                                    case GRAVEL:            //case 13:
+                                    case SANDSTONE:         //case 24:
+                                    case MOSSY_COBBLESTONE: //case 48:
+                                    case CLAY:              //case 82:
+                                    case OBSIDIAN:          //case 49:
+                                    case SNOW:              //case 78:
                                         for (int d = 0; (d < this.depth); d++)
                                         {
-                                            if (this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z).getTypeId() != 0)
+                                            if (!this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z).getType().isAir())
                                             {
                                                 this.current.perform(this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z)); // fills down as many layers as you specify in
                                                 // parameters
@@ -74,7 +75,7 @@ public class UnderlayBrush extends PerformBrush
                             {
                                 for (int d = 0; (d < this.depth); d++)
                                 {
-                                    if (this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z).getTypeId() != 0)
+                                    if (!this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z).getType().isAir())
                                     {
                                         this.current.perform(this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z)); // fills down as many layers as you specify in
                                         // parameters
@@ -112,21 +113,21 @@ public class UnderlayBrush extends PerformBrush
                             { // if the override parameter has not been activated, go to the switch that filters out manmade stuff.
 
                                 switch (this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z))
-                                {
-                                    case 1:
-                                    case 2:
-                                    case 3:
-                                    case 12:
-                                    case 13:
-                                    case 14: // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess
-                                        // with.
-                                    case 15:
-                                    case 16:
-                                    case 24:
-                                    case 48:
-                                    case 82:
-                                    case 49:
-                                    case 78:
+                                {   //TODO SERIOUSLY? AGAIN?!
+                                    case STONE:                 //case 1:
+                                    case GRASS:                 //case 2:
+                                    case DIRT:                  //case 3:
+                                    case SAND:                  //case 12:
+                                    case GRAVEL:                //case 13:
+                                    case GOLD_ORE:              //case 14:
+                                    case IRON_ORE:              //case 15:
+                                    case COAL_ORE:              //case 16:
+                                    case SANDSTONE:             //case 24:
+                                    case MOSSY_COBBLESTONE:     //case 48:
+                                    case CLAY:                  //case 82:
+                                    case OBSIDIAN:              //case 49:
+                                    case SNOW:                  //case 78:
+                                        // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
                                         for (int d = -1; (d < this.depth - 1); d++)
                                         {
                                             this.current.perform(this.clampY(this.getTargetBlock().getX() + x, y - d, this.getTargetBlock().getZ() + z)); // fills down as many layers as you specify in

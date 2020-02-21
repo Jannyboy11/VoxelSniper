@@ -7,6 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Stairs;
 
 /**
  * http://www.voxelwiki.com/minecraft/Voxelsniper#Spiral_Staircase_Brush
@@ -15,9 +19,101 @@ import org.bukkit.block.Block;
  */
 public class SpiralStaircaseBrush extends Brush
 {
-    private String stairtype = "block"; // "block" 1x1 blocks (default), "step" alternating step double step, "stair" staircase with blocks on corners
-    private String sdirect = "c"; // "c" clockwise (default), "cc" counter-clockwise
-    private String sopen = "n"; // "n" north (default), "e" east, "world" south, "world" west
+    private enum StairType {
+        STAIR("stair"), SLAB("step"), BLOCK("block");
+
+        private final String string;
+
+        private StairType(String string) {
+            this.string = string;
+        }
+
+        @Override
+        public String toString() {
+            return string;
+        }
+
+        static StairType fromString(String s) {
+            switch (s.toLowerCase()) {
+                case "block":
+                    return BLOCK;
+                case "step":
+                case "slab":
+                    return SLAB;
+                case "stair":
+                case "woodstair":
+                case "cobblestair":
+                    return STAIR;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private enum ClockDirection {
+        CLOCKWISE("c"), COUNTER_CLOCKWISE("cc");
+
+        private String string;
+
+        private ClockDirection(String string) {
+            this.string = string;
+        }
+
+        public String toString() {
+            return string;
+        }
+
+        static ClockDirection fromString(String s) {
+            switch (s.toLowerCase()) {
+                case "c":
+                case "clockwise":
+                    return CLOCKWISE;
+                case "cc":
+                case "counterclockwise":
+                    return COUNTER_CLOCKWISE;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private enum WindDirection {
+        NORTH("n"), EAST("e"), SOUTH("s"), WEST("w");
+
+        private final String string;
+
+        private WindDirection(String string) {
+            this.string = string;
+        }
+
+        @Override
+        public String toString() {
+            return string;
+        }
+
+        static WindDirection fromString(String s) {
+            switch (s.toLowerCase()) {
+                case "n":
+                case "north":
+                    return NORTH;
+                case "e":
+                case "east":
+                    return EAST;
+                case "s":
+                case "south":
+                    return SOUTH;
+                case "w":
+                case "west":
+                    return WEST;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private StairType stairtype = StairType.BLOCK;              //"block"; // "block" 1x1 blocks (default), "step" alternating step double step, "stair" staircase with blocks on corners
+    private ClockDirection sdirect = ClockDirection.CLOCKWISE;  //"c"; // "c" clockwise (default), "cc" counter-clockwise
+    private WindDirection sopen = WindDirection.NORTH;          //"n"; // "n" north (default), "e" east, "world" south, "world" west
 
     /**
      *
@@ -47,24 +143,24 @@ public class SpiralStaircaseBrush extends Brush
         int zOffset = 0;
         int toggle = 0;
 
-        if (this.sdirect.equalsIgnoreCase("cc"))
+        if (this.sdirect == ClockDirection.CLOCKWISE)
         {
-            if (this.sopen.equalsIgnoreCase("n"))
+            if (this.sopen == WindDirection.NORTH)
             {
                 startX = 0;
                 startZ = 2 * v.getBrushSize();
             }
-            else if (this.sopen.equalsIgnoreCase("e"))
+            else if (this.sopen == WindDirection.EAST)
             {
                 startX = 0;
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("s"))
+            else if (this.sopen == WindDirection.SOUTH)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 0;
             }
-            else
+            else /*this.sopen == WindDirection.WEST ?*/
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 2 * v.getBrushSize();
@@ -72,22 +168,22 @@ public class SpiralStaircaseBrush extends Brush
         }
         else
         {
-            if (this.sopen.equalsIgnoreCase("n"))
+            if (this.sopen == WindDirection.NORTH)
             {
                 startX = 0;
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("e"))
+            else if (this.sopen == WindDirection.EAST)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("s"))
+            else if (this.sopen == WindDirection.SOUTH)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 2 * v.getBrushSize();
             }
-            else
+            else /*this.sopen == WindDirection.WEST ?*/
             {
                 startX = 0;
                 startZ = 2 * v.getBrushSize();
@@ -96,13 +192,13 @@ public class SpiralStaircaseBrush extends Brush
 
         while (y < v.getVoxelHeight())
         {
-            if (this.stairtype.equalsIgnoreCase("block"))
+            if (this.stairtype == StairType.BLOCK)
             {
                 // 1x1x1 voxel material steps
                 spiral[startX + xOffset][y][startZ + zOffset] = 1;
                 y++;
             }
-            else if (this.stairtype.equalsIgnoreCase("step"))
+            else if (this.stairtype == StairType.SLAB)
             {
                 // alternating step-doublestep, uses data value to determine type
                 switch (toggle)
@@ -126,31 +222,36 @@ public class SpiralStaircaseBrush extends Brush
 
             }
 
+            //TODO there are more stair types then just wood staris and cobble stairs
+            //TODO such as sandstone, endstone, nether quartz, purpur and more...
+            //TODO can I use the tag system here?
+
             // Adjust horizontal position and do stair-option array stuff
             if (startX + xOffset == 0)
             { // All North
                 if (startZ + zOffset == 0)
                 { // NORTHEAST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    //if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         xOffset++;
                     }
-                    else
+                    else /*this.sdirect == ClockDirection.COUNTER_CLOCKWISE*/
                     {
                         zOffset++;
                     }
                 }
                 else if (startZ + zOffset == 2 * v.getBrushSize())
                 { // NORTHWEST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         zOffset--;
                     }
@@ -161,9 +262,9 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 { // JUST PLAIN NORTH
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 5;
                             y++;
@@ -172,7 +273,7 @@ public class SpiralStaircaseBrush extends Brush
                     }
                     else
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 4;
                             y++;
@@ -185,11 +286,11 @@ public class SpiralStaircaseBrush extends Brush
             { // ALL SOUTH
                 if (startZ + zOffset == 0)
                 { // SOUTHEAST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         zOffset++;
                     }
@@ -200,11 +301,11 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else if (startZ + zOffset == 2 * v.getBrushSize())
                 { // SOUTHWEST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         xOffset--;
                     }
@@ -215,9 +316,9 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 { // JUST PLAIN SOUTH
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 4;
                             y++;
@@ -226,7 +327,7 @@ public class SpiralStaircaseBrush extends Brush
                     }
                     else
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 5;
                             y++;
@@ -237,9 +338,9 @@ public class SpiralStaircaseBrush extends Brush
             }
             else if (startZ + zOffset == 0)
             { // JUST PLAIN EAST
-                if (this.sdirect.equalsIgnoreCase("c"))
+                if (this.sdirect == ClockDirection.CLOCKWISE)
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 2;
                         y++;
@@ -248,7 +349,7 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 3;
                         y++;
@@ -258,9 +359,9 @@ public class SpiralStaircaseBrush extends Brush
             }
             else
             { // JUST PLAIN WEST
-                if (this.sdirect.equalsIgnoreCase("c"))
+                if (this.sdirect == ClockDirection.CLOCKWISE)
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 3;
                         y++;
@@ -269,7 +370,7 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 2;
                         y++;
@@ -296,7 +397,7 @@ public class SpiralStaircaseBrush extends Brush
                         case 0:
                             if (i != v.getVoxelHeight() - 1)
                             {
-                                if (!((this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair")) && spiral[x][i + 1][z] == 1))
+                                if (!(this.stairtype == StairType.STAIR && spiral[x][i + 1][z] == 1))
                                 {
                                     if (!this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).isAir())
                                     {
@@ -317,7 +418,7 @@ public class SpiralStaircaseBrush extends Brush
 
                             break;
                         case 1:
-                            if (this.stairtype.equalsIgnoreCase("block"))
+                            if (this.stairtype == StairType.BLOCK)
                             {
                                 if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != v.getVoxelId())
                                 {
@@ -325,7 +426,7 @@ public class SpiralStaircaseBrush extends Brush
                                 }
                                 this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, v.getVoxelId());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("step"))
+                            else if (this.stairtype == StairType.SLAB)
                             {
                                 if (!Tag.SLABS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z)))
                                 {
@@ -334,7 +435,7 @@ public class SpiralStaircaseBrush extends Brush
                                 this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, Material.STONE_SLAB);
                                 this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setBlockData(v.getData());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                            else if (this.stairtype == StairType.STAIR)
                             {
                                 if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i - 1, blockPositionZ - v.getBrushSize() + z) != v.getVoxelId())
                                 {
@@ -345,52 +446,43 @@ public class SpiralStaircaseBrush extends Brush
                             }
                             break;
                         case 2:
-                            if (this.stairtype.equalsIgnoreCase("step"))
+                            if (this.stairtype == StairType.SLAB)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != 43)
+                                // id 43 == LEGACY DOUBLE STEP
+                                if (!Tag.SLABS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, 43);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData(v.getData());
+                                Material stoneSlab = Material.STONE_SLAB;
+                                Slab slab = (Slab) stoneSlab.createBlockData();
+                                slab.setType(Slab.Type.DOUBLE);
+                                this.setBlockIdAndDataAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, Material.STONE_SLAB, slab);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setBlockData(v.getData());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("woodstair"))
+                            else if (this.stairtype == StairType.STAIR)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != 53)
+                                // id 53 == LEGACY WOOD STAIRS, id 67 == LEGACY COBBLESTONE STAIRS
+                                if (!Tag.STAIRS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, 53);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData((byte) 0);
-                            }
-                            else if (this.stairtype.equalsIgnoreCase("cobblestair"))
-                            {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != 67)
-                                {
-                                    undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
-                                }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, 67);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData((byte) 0);
+                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, Material.OAK_STAIRS);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setBlockData(Material.AIR.createBlockData());
                             }
                             break;
                         default:
-                            if (this.stairtype.equalsIgnoreCase("woodstair"))
+                            if (this.stairtype == StairType.STAIR)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != 53)
+                                //wood stair
+                                if (!Tag.STAIRS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, 53);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData((byte) (spiral[x][i][z] - 2));
-                            }
-                            else if (this.stairtype.equalsIgnoreCase("cobblestair"))
-                            {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z) != 67)
-                                {
-                                    undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
-                                }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, 67);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData((byte) (spiral[x][i][z] - 2));
+                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY + i, Material.OAK_STAIRS);
+                                Stairs stairs = (Stairs) Material.OAK_STAIRS.createBlockData();
+                                stairs.setFacing(BlockFace.NORTH); //TODO is this correct??? I REALLY DO NOT KNOW AT THIS POINT
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setBlockData(stairs);
+                                //this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z).setData((spiral[x][i][z] - 2));
                             }
                             break;
                     }
@@ -421,47 +513,47 @@ public class SpiralStaircaseBrush extends Brush
         int zOffset = 0;
         int toggle = 0;
 
-        if (this.sdirect.equalsIgnoreCase("cc"))
+        if (this.sdirect == ClockDirection.COUNTER_CLOCKWISE)
         {
-            if (this.sopen.equalsIgnoreCase("n"))
+            if (this.sopen == WindDirection.NORTH)
             {
                 startX = 0;
                 startZ = 2 * v.getBrushSize();
             }
-            else if (this.sopen.equalsIgnoreCase("e"))
+            else if (this.sopen == WindDirection.EAST)
             {
                 startX = 0;
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("s"))
+            else if (this.sopen == WindDirection.SOUTH)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 0;
             }
-            else
+            else    //WindDirection.WEST
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 2 * v.getBrushSize();
             }
         }
-        else
+        else //CLOCKWISE
         {
-            if (this.sopen.equalsIgnoreCase("n"))
+            if (this.sopen == WindDirection.NORTH)
             {
                 startX = 0;
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("e"))
+            else if (this.sopen == WindDirection.EAST)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 0;
             }
-            else if (this.sopen.equalsIgnoreCase("s"))
+            else if (this.sopen == WindDirection.SOUTH)
             {
                 startX = 2 * v.getBrushSize();
                 startZ = 2 * v.getBrushSize();
             }
-            else
+            else    //WindDirection.WEST
             {
                 startX = 0;
                 startZ = 2 * v.getBrushSize();
@@ -470,13 +562,13 @@ public class SpiralStaircaseBrush extends Brush
 
         while (y < v.getVoxelHeight())
         {
-            if (this.stairtype.equalsIgnoreCase("block"))
+            if (this.stairtype == StairType.BLOCK)
             {
                 // 1x1x1 voxel material steps
                 spiral[startX + xOffset][y][startZ + zOffset] = 1;
                 y++;
             }
-            else if (this.stairtype.equalsIgnoreCase("step"))
+            else if (this.stairtype == StairType.SLAB)
             {
                 // alternating step-doublestep, uses data value to determine type
                 switch (toggle)
@@ -505,11 +597,11 @@ public class SpiralStaircaseBrush extends Brush
             { // All North
                 if (startZ + zOffset == 0)
                 { // NORTHEAST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         xOffset++;
                     }
@@ -520,11 +612,11 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else if (startZ + zOffset == 2 * v.getBrushSize())
                 { // NORTHWEST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         zOffset--;
                     }
@@ -535,9 +627,9 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 { // JUST PLAIN NORTH
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 4;
                             y++;
@@ -546,7 +638,7 @@ public class SpiralStaircaseBrush extends Brush
                     }
                     else
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 5;
                             y++;
@@ -560,11 +652,11 @@ public class SpiralStaircaseBrush extends Brush
             { // ALL SOUTH
                 if (startZ + zOffset == 0)
                 { // SOUTHEAST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect  == ClockDirection.CLOCKWISE)
                     {
                         zOffset++;
                     }
@@ -575,11 +667,11 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else if (startZ + zOffset == 2 * v.getBrushSize())
                 { // SOUTHWEST
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 1;
                     }
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
                         xOffset--;
                     }
@@ -590,9 +682,9 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 { // JUST PLAIN SOUTH
-                    if (this.sdirect.equalsIgnoreCase("c"))
+                    if (this.sdirect == ClockDirection.CLOCKWISE)
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 5;
                             y++;
@@ -601,7 +693,7 @@ public class SpiralStaircaseBrush extends Brush
                     }
                     else
                     {
-                        if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                        if (this.stairtype == StairType.STAIR)
                         {
                             spiral[startX + xOffset][y][startZ + zOffset] = 4;
                             y++;
@@ -613,9 +705,9 @@ public class SpiralStaircaseBrush extends Brush
             }
             else if (startZ + zOffset == 0)
             { // JUST PLAIN EAST
-                if (this.sdirect.equalsIgnoreCase("c"))
+                if (this.sdirect == ClockDirection.CLOCKWISE)
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 3;
                         y++;
@@ -624,7 +716,7 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 2;
                         y++;
@@ -634,9 +726,9 @@ public class SpiralStaircaseBrush extends Brush
             }
             else
             { // JUST PLAIN WEST
-                if (this.sdirect.equalsIgnoreCase("c"))
+                if (this.sdirect == ClockDirection.CLOCKWISE)
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 2;
                         y++;
@@ -645,7 +737,7 @@ public class SpiralStaircaseBrush extends Brush
                 }
                 else
                 {
-                    if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                    if (this.stairtype == StairType.STAIR)
                     {
                         spiral[startX + xOffset][y][startZ + zOffset] = 3;
                         y++;
@@ -662,7 +754,7 @@ public class SpiralStaircaseBrush extends Brush
         for (int x = 2 * v.getBrushSize(); x >= 0; x--)
         {
 
-            for (int i = v.getVoxelHeight() - 1; i >= 0; i--)
+            for (int i = v.getVoxelHeight() - 1; i >= 0; i--) //can't use y because that's already defined.
             {
 
                 for (int z = 2 * v.getBrushSize(); z >= 0; z--)
@@ -674,14 +766,14 @@ public class SpiralStaircaseBrush extends Brush
                     switch (spiral[x][i][z])
                     {
                         case 0:
-                            if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 0)
+                            if (!this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).isAir())
                             {
                                 undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
                             }
-                            this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 0);
+                            this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, Material.AIR);
                             break;
                         case 1:
-                            if (this.stairtype.equalsIgnoreCase("block"))
+                            if (this.stairtype == StairType.BLOCK)
                             {
                                 if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != v.getVoxelId())
                                 {
@@ -689,16 +781,19 @@ public class SpiralStaircaseBrush extends Brush
                                 }
                                 this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, v.getVoxelId());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("step"))
+                            else if (this.stairtype == StairType.SLAB)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 44)
+                                if (!Tag.SLABS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 44);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData(v.getData());
+                                Material stoneSlab = Material.STONE_SLAB;
+                                Slab slab = (Slab) stoneSlab.createBlockData();
+                                slab.setType(Slab.Type.BOTTOM);
+                                this.setBlockIdAndDataAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, stoneSlab, slab);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setBlockData(v.getData());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("woodstair") || this.stairtype.equalsIgnoreCase("cobblestair"))
+                            else if (this.stairtype == StairType.STAIR)
                             {
                                 if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != v.getVoxelId())
                                 {
@@ -708,52 +803,42 @@ public class SpiralStaircaseBrush extends Brush
                             }
                             break;
                         case 2:
-                            if (this.stairtype.equalsIgnoreCase("step"))
+                            if (this.stairtype == StairType.SLAB)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 43)
+                                if (!Tag.SLABS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 43);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData(v.getData());
+                                Material stoneSlab = Material.STONE_SLAB; //TODO what about the other types of slabs?
+                                Slab slab = (Slab) stoneSlab.createBlockData();
+                                slab.setType(Slab.Type.DOUBLE);
+                                this.setBlockIdAndDataAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, stoneSlab, slab);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setBlockData(v.getData());
                             }
-                            else if (this.stairtype.equalsIgnoreCase("woodstair"))
+                            else if (this.stairtype == StairType.STAIR)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 53)
+                                if (!Tag.STAIRS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() - x, blockPositionY + i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 53);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData((byte) 0);
-                            }
-                            else if (this.stairtype.equalsIgnoreCase("cobblestair"))
-                            {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 67)
-                                {
-                                    undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
-                                }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 67);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData((byte) 0);
+                                Material oakWoodStairs = Material.OAK_STAIRS; //TODO what about the other types of stairs?
+                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, oakWoodStairs);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setBlockData(Material.AIR.createBlockData());
                             }
                             break;
                         default:
-                            if (this.stairtype.equalsIgnoreCase("woodstair"))
+                            if (this.stairtype == StairType.STAIR)
                             {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 53)
+                                if (!Tag.STAIRS.isTagged(this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z)))
                                 {
                                     undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
                                 }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 53);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData((byte) (spiral[x][i][z] - 2));
-                            }
-                            else if (this.stairtype.equalsIgnoreCase("cobblestair"))
-                            {
-                                if (this.getBlockIdAt(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z) != 67)
-                                {
-                                    undo.put(this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z));
-                                }
-                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, 67);
-                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData((byte) (spiral[x][i][z] - 2));
+                                Material oakStairs = Material.OAK_STAIRS;
+                                Stairs stairs = (Stairs) oakStairs.createBlockData();
+                                stairs.setFacing(BlockFace.NORTH); //TODO I REALLY DON'T KNOW IF THIS IS CORRECT!!!
+                                this.setBlockIdAt(blockPositionZ - v.getBrushSize() + z, blockPositionX - v.getBrushSize() + x, blockPositionY - i, oakStairs);
+                                this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setBlockData(stairs);
+                                //this.clampY(blockPositionX - v.getBrushSize() + x, blockPositionY - i, blockPositionZ - v.getBrushSize() + z).setData((byte) (spiral[x][i][z] - 2));
                             }
                             break;
                     }
@@ -796,25 +881,27 @@ public class SpiralStaircaseBrush extends Brush
             v.sendMessage(ChatColor.GOLD + "Spiral Staircase Parameters:");
             v.sendMessage(ChatColor.AQUA + "/b sstair 'block' (default) | 'step' | 'woodstair' | 'cobblestair' -- set the type of staircase");
             v.sendMessage(ChatColor.AQUA + "/b sstair 'c' (default) | 'cc' -- set the turning direction of staircase");
-            v.sendMessage(ChatColor.AQUA + "/b sstair 'n' (default) | 'e' | 's' | 'world' -- set the opening direction of staircase");
+            v.sendMessage(ChatColor.AQUA + "/b sstair 'n' (default) | 'e' | 's' | 'w' -- set the opening direction of staircase");
             return;
         }
 
         for (int i = 1; i < par.length; i++)
         {
-            if (par[i].equalsIgnoreCase("block") || par[i].equalsIgnoreCase("step") || par[i].equalsIgnoreCase("woodstair") || par[i].equalsIgnoreCase("cobblestair"))
-            {
-                this.stairtype = par[i];
+            StairType stairType = StairType.fromString(par[i]);
+            ClockDirection clockDirection = ClockDirection.fromString(par[i]);
+            WindDirection windDirection = WindDirection.fromString(par[i]);
+            if (stairType != null) {
+                this.stairtype = stairType;
                 v.sendMessage(ChatColor.BLUE + "Staircase type: " + this.stairtype);
             }
-            else if (par[i].equalsIgnoreCase("c") || par[i].equalsIgnoreCase("cc"))
+            else if (clockDirection != null)
             {
-                this.sdirect = par[i];
+                this.sdirect = clockDirection;
                 v.sendMessage(ChatColor.BLUE + "Staircase turns: " + this.sdirect);
             }
-            else if (par[i].equalsIgnoreCase("n") || par[i].equalsIgnoreCase("e") || par[i].equalsIgnoreCase("s") || par[i].equalsIgnoreCase("world"))
+            else if (windDirection != null)
             {
-                this.sopen = par[i];
+                this.sopen = windDirection;
                 v.sendMessage(ChatColor.BLUE + "Staircase opens: " + this.sopen);
             }
             else
