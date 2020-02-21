@@ -6,24 +6,22 @@ import com.thevoxelbox.voxelsniper.SnipeData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.stream.Collectors;
+
 /**
  * @author Monofraps
  */
 @SuppressWarnings("deprecation")
 public abstract class BlendBrushBase extends Brush
 {
-    private static int maxBlockMaterialID; //TODO Material's should not have a maximum!
+    static final ArrayList<Material> blocks = Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toCollection(ArrayList::new));
+
     protected boolean excludeAir = true;
     protected boolean excludeWater = true;
-
-    static
-    {
-        // Find highest placeable block ID
-        for (Material material : Material.values())
-        {
-            maxBlockMaterialID = ((material.isBlock() && (material.getId() > maxBlockMaterialID)) ? material.getId() : maxBlockMaterialID);
-        }
-    }
 
     /**
      * @param v
@@ -67,19 +65,20 @@ public abstract class BlendBrushBase extends Brush
     }
 
     /**
-     * @return
+     * @deprecated use {@link #getBlockIterator()} or {@link #getBlockCount()} instead.
      */
+    @Deprecated(forRemoval = true)
     protected static int getMaxBlockMaterialID()
     {
-        return maxBlockMaterialID;
+        return blocks.get(blocks.size() - 1).getId();
     }
 
-    /**
-     * @param maxBlockMaterialID
-     */
-    protected static void setMaxBlockMaterialID(int maxBlockMaterialID)
-    {
-        BlendBrushBase.maxBlockMaterialID = maxBlockMaterialID;
+    protected static int getBlockCount() {
+        return blocks.size();
+    }
+
+    protected static ListIterator<Material> getBlockIterator() {
+        return blocks.listIterator();
     }
 
     /**

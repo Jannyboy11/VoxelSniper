@@ -1,15 +1,11 @@
 package com.thevoxelbox.voxelsniper;
 
-import com.google.common.collect.Maps;
-import com.thevoxelbox.voxelsniper.brush.IBrush;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.util.NumberConversions;
 import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
