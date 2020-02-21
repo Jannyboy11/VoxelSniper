@@ -19,12 +19,21 @@ public class SniperManager
         this.plugin = plugin;
     }
 
+    public Sniper getSniperForPlayer(UUID player) {
+        return sniperInstances.computeIfAbsent(player, uuid -> new Sniper(plugin, uuid));
+    }
+
     public Sniper getSniperForPlayer(Player player)
     {
-        if (sniperInstances.get(player.getUniqueId()) == null)
-        {
-            sniperInstances.put(player.getUniqueId(), new Sniper(plugin, player));
-        }
-        return sniperInstances.get(player.getUniqueId());
+        return getSniperForPlayer(player.getUniqueId());
     }
+
+    public boolean removeSniper(UUID player) {
+        return sniperInstances.remove(player) != null;
+    }
+
+    public boolean removeSniper(Player player) {
+        return removeSniper(player.getUniqueId());
+    }
+
 }

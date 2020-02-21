@@ -68,8 +68,8 @@ public class NullableIntegerStringParser extends StringParser
         }
         catch (NumberFormatException nfe)
         {
-            throw (new ParseException("Unable to convert '" + arg + "' to an Integer.", nfe));
+            throw new ParseException("Unable to convert '" + arg + "' to an Integer.", nfe);
         }
-        return (result);
+        return result;
     }
 }

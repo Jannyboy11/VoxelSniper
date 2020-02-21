@@ -30,7 +30,7 @@ public class VoxelReplaceCommand extends VoxelCommand
             Block targetBlock = new RangeBlockHelper(player, player.getWorld()).getTargetBlock();
             if (targetBlock != null)
             {
-                snipeData.setReplaceId(targetBlock.getTypeId());
+                snipeData.setReplaceId(targetBlock.getType());
                 snipeData.getVoxelMessage().replace();
             }
             return true;
@@ -41,7 +41,7 @@ public class VoxelReplaceCommand extends VoxelCommand
         {
             if (material.isBlock())
             {
-                snipeData.setReplaceId(material.getId());
+                snipeData.setReplaceId(material);
                 snipeData.getVoxelMessage().replace();
                 return true;
             }

@@ -35,7 +35,7 @@ public class VoxelBrushCommand extends VoxelCommand
             sniper.displayInfo();
             return true;
         }
-        else if (args.length > 0)
+        else
         {
             try
             {

@@ -20,6 +20,8 @@ public abstract class VoxelCommand
 
     public abstract boolean onCommand(final Player player, final String[] args);
 
+    //TODO tabcompletion??!!
+
     public String getDescription()
     {
         return description;
@@ -69,12 +71,8 @@ public abstract class VoxelCommand
     protected String[] hackTheArray(String[] args)
     {
         String[] returnValue = new String[args.length + 1];
+        System.arraycopy(args, 0, returnValue, 1, args.length);
         returnValue[0] = "";
-        for (int i = 0, argsLength = args.length; i < argsLength; i++)
-        {
-            String arg = args[i];
-            returnValue[i + 1] = arg;
-        }
         return returnValue;
     }
 

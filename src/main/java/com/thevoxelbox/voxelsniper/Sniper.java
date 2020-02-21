@@ -37,14 +37,18 @@ public class Sniper
     private LinkedList<Undo> undoList = new LinkedList<Undo>();
     private Map<String, SniperTool> tools = Maps.newHashMap();
 
-    public Sniper(VoxelSniper plugin, Player player)
-    {
+    public Sniper(VoxelSniper plugin, UUID player) {
         this.plugin = plugin;
-        this.player = player.getUniqueId();
+        this.player = player;
         SniperTool sniperTool = new SniperTool(this);
         sniperTool.assignAction(SnipeAction.ARROW, Material.ARROW);
         sniperTool.assignAction(SnipeAction.GUNPOWDER, Material.GUNPOWDER);
         tools.put(null, sniperTool);
+    }
+
+    public Sniper(VoxelSniper plugin, Player player)
+    {
+        this(plugin, player.getUniqueId());
     }
 
     public String getCurrentToolId()

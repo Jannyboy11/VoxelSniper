@@ -5,8 +5,10 @@ import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Sniper;
 import com.thevoxelbox.voxelsniper.VoxelSniper;
 import com.thevoxelbox.voxelsniper.api.command.VoxelCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 public class VoxelListCommand extends VoxelCommand
@@ -18,6 +20,8 @@ public class VoxelListCommand extends VoxelCommand
         setPermission("voxelsniper.sniper");
     }
 
+    //TODO tabcompletion!!
+
     @Override
     public boolean onCommand(Player player, String[] args)
     {
@@ -28,7 +32,7 @@ public class VoxelListCommand extends VoxelCommand
         {
             final RangeBlockHelper rangeBlockHelper = new RangeBlockHelper(player, player.getWorld());
             final Block targetBlock = rangeBlockHelper.getTargetBlock();
-            snipeData.getVoxelList().add(new int[]{ targetBlock.getTypeId(), targetBlock.getData() });
+            snipeData.getVoxelList().add(targetBlock.getBlockData());
             snipeData.getVoxelMessage().voxelList();
             return true;
         }
@@ -47,8 +51,7 @@ public class VoxelListCommand extends VoxelCommand
         for (final String string : args)
         {
             String tmpint;
-            Integer xint;
-            Integer xdat;
+            BlockData xBlockData;
 
             if (string.startsWith("-"))
             {
@@ -60,38 +63,23 @@ public class VoxelListCommand extends VoxelCommand
                 tmpint = string;
             }
 
-            try
+            xBlockData = Bukkit.createBlockData(tmpint);
+
+            if (xBlockData != null && xBlockData.getMaterial().isBlock())
             {
-                if (tmpint.contains(":"))
+                if (!remove)
                 {
-                    String[] tempintsplit = tmpint.split(":");
-                    xint = Integer.parseInt(tempintsplit[0]);
-                    xdat = Integer.parseInt(tempintsplit[1]);
+                    snipeData.getVoxelList().add(xBlockData);
+                    snipeData.getVoxelMessage().voxelList();
                 }
                 else
                 {
-                    xint = Integer.parseInt(tmpint);
-                    xdat = -1;
+                    snipeData.getVoxelList().removeValue(xBlockData);
+                    snipeData.getVoxelMessage().voxelList();
                 }
-
-                if (Material.getMaterial(xint) != null && Material.getMaterial(xint).isBlock())
-                {
-                    if (!remove)
-                    {
-                        snipeData.getVoxelList().add(new int[]{ xint, xdat });
-                        snipeData.getVoxelMessage().voxelList();
-                    }
-                    else
-                    {
-                        snipeData.getVoxelList().removeValue(new int[]{ xint, xdat });
-                        snipeData.getVoxelMessage().voxelList();
-                    }
-                }
-
             }
-            catch (NumberFormatException ignored)
-            {
-            }
+
+
         }
         return true;
     }

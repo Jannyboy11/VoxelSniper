@@ -11,7 +11,7 @@ import java.util.*;
 public class VoxelList implements Iterable<BlockData>
 {
 
-    private Set<BlockData> valuePairs = new LinkedHashSet<BlockData>(); //LinkedHashSet because order is important for getList
+    private Set<BlockData> valuePairs = new LinkedHashSet<>(); //LinkedHashSet because order is important for getList
 
     /**
      * Adds the specified id, data value pair to the VoxelList. A data value of -1 will operate on all data values of that id.
@@ -20,6 +20,7 @@ public class VoxelList implements Iterable<BlockData>
      */
     public void add(BlockData i)
     {
+        //what about blocks that are in the same tag?
         valuePairs.add(i);
     }
 
@@ -41,6 +42,7 @@ public class VoxelList implements Iterable<BlockData>
     public boolean contains(final BlockData blockData)
     {
         return valuePairs.contains(blockData);
+        //check with BlockData#matches instead of #equals?
     }
 
     /**

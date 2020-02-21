@@ -1,9 +1,14 @@
 package com.thevoxelbox.voxelsniper;
 
 import com.google.common.base.Preconditions;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Configuration storage defining global configurations for VoxelSniper.
@@ -72,9 +77,12 @@ public class VoxelSniperConfiguration
      *
      * @return List of restricted Litesniper Items
      */
-    public List<Integer> getLiteSniperRestrictedItems()
+    public Set<Material> getLiteSniperRestrictedItems()
     {
-        return configuration.getIntegerList(CONFIG_IDENTIFIER_LITESNIPER_RESTRICTED_ITEMS);
+        return configuration.getStringList(CONFIG_IDENTIFIER_LITESNIPER_RESTRICTED_ITEMS).stream()
+                .map(Material::matchMaterial)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Material.class)));
     }
 
     /**
@@ -82,10 +90,11 @@ public class VoxelSniperConfiguration
      *
      * @param restrictedItems List of restricted Litesniper Items
      */
-    public void setLitesniperRestrictedItems(List<Integer> restrictedItems)
+    public void setLiteSniperRestrictedItems(Set<Material> restrictedItems)
     {
         Preconditions.checkNotNull(restrictedItems, "Restricted items must be a list.");
-        configuration.set(CONFIG_IDENTIFIER_LITESNIPER_RESTRICTED_ITEMS, restrictedItems);
+        List<String> configValue = restrictedItems.stream().map(Material::toString).collect(Collectors.toList());
+        configuration.set(CONFIG_IDENTIFIER_LITESNIPER_RESTRICTED_ITEMS, configValue);
     }
 
     /**
