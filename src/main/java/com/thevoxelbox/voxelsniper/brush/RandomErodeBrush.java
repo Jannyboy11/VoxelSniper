@@ -3,6 +3,7 @@ package com.thevoxelbox.voxelsniper.brush;
 import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Undo;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 import java.util.Random;
@@ -83,32 +84,32 @@ public class RandomErodeBrush extends Brush
             int d = 0;
             if (this.snap[x + 1][y][z].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x + 1][y][z].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x + 1][y][z].getNativeBlock().getType());
                 d++;
             }
             if (this.snap[x - 1][y][z].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x - 1][y][z].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x - 1][y][z].getNativeBlock().getType());
                 d++;
             }
             if (this.snap[x][y + 1][z].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x][y + 1][z].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x][y + 1][z].getNativeBlock().getType());
                 d++;
             }
             if (this.snap[x][y - 1][z].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x][y - 1][z].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x][y - 1][z].getNativeBlock().getType());
                 d++;
             }
             if (this.snap[x][y][z + 1].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x][y][z + 1].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x][y][z + 1].getNativeBlock().getType());
                 d++;
             }
             if (this.snap[x][y][z - 1].isSolid())
             {
-                this.snap[x][y][z].setId(this.snap[x][y][z - 1].getNativeBlock().getTypeId());
+                this.snap[x][y][z].setId(this.snap[x][y][z - 1].getNativeBlock().getType());
                 d++;
             }
             return (d >= this.fillFace);
@@ -197,7 +198,7 @@ public class RandomErodeBrush extends Brush
                             {
                                 if (this.erode(x, y, z))
                                 {
-                                    this.snap[x][y][z].getNativeBlock().setTypeId(0);
+                                    this.snap[x][y][z].getNativeBlock().setType(Material.AIR);
                                 }
                             }
                         }
@@ -228,7 +229,7 @@ public class RandomErodeBrush extends Brush
                             {
                                 if (this.fill(x, y, z))
                                 {
-                                    this.snap[x][y][z].getNativeBlock().setTypeId(this.snap[x][y][z].getId());
+                                    this.snap[x][y][z].getNativeBlock().setType(this.snap[x][y][z].getId());
                                 }
                             }
                         }
@@ -243,7 +244,7 @@ public class RandomErodeBrush extends Brush
             {
                 for (final BlockWrapper block : firstSnapString)
                 {
-                    if (block.getI() != block.getNativeBlock().getTypeId())
+                    if (block.getI() != block.getNativeBlock().getType())
                     {
                         undo.put(block.getNativeBlock());
                     }
@@ -279,7 +280,7 @@ public class RandomErodeBrush extends Brush
                             {
                                 if (this.fill(x, y, z))
                                 {
-                                    this.snap[x][y][z].getNativeBlock().setTypeId(this.snap[x][y][z].getId());
+                                    this.snap[x][y][z].getNativeBlock().setType(this.snap[x][y][z].getId());
                                 }
                             }
                         }
@@ -310,7 +311,7 @@ public class RandomErodeBrush extends Brush
                             {
                                 if (this.erode(x, y, z))
                                 {
-                                    this.snap[x][y][z].getNativeBlock().setTypeId(0);
+                                    this.snap[x][y][z].getNativeBlock().setType(Material.AIR);
                                 }
                             }
                         }
@@ -325,7 +326,7 @@ public class RandomErodeBrush extends Brush
             {
                 for (final BlockWrapper block : firstSnapString)
                 {
-                    if (block.getI() != block.getNativeBlock().getTypeId())
+                    if (block.getI() != block.getNativeBlock().getType())
                     {
                         undo.put(block.getNativeBlock());
                     }
@@ -393,8 +394,8 @@ public class RandomErodeBrush extends Brush
     {
         private boolean solid;
         private Block nativeBlock;
-        private int id;
-        private int i;
+        private Material id;
+        private Material i;
 
         /**
          * @param bl
@@ -403,28 +404,14 @@ public class RandomErodeBrush extends Brush
 		public BlockWrapper(final Block bl)
         {
             this.setNativeBlock(bl);
-            this.setI(bl.getTypeId());
+            this.setI(bl.getType());
             switch (bl.getType())
             {
                 case AIR:
-                    this.setSolid(false);
-                    break;
-
                 case WATER:
-                    this.setSolid(false);
-                    break;
-
-                case STATIONARY_WATER:
-                    this.setSolid(false);
-                    break;
-
-                case STATIONARY_LAVA:
-                    this.setSolid(false);
-                    break;
                 case LAVA:
                     this.setSolid(false);
                     break;
-
                 default:
                     this.setSolid(true);
             }
@@ -450,22 +437,22 @@ public class RandomErodeBrush extends Brush
             this.nativeBlock = nativeBlock;
         }
 
-        public int getId()
+        public Material getId()
         {
             return id;
         }
 
-        public void setId(int id)
+        public void setId(Material id)
         {
             this.id = id;
         }
 
-        public int getI()
+        public Material getI()
         {
             return i;
         }
 
-        public void setI(int i)
+        public void setI(Material i)
         {
             this.i = i;
         }

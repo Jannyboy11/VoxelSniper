@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 import org.bukkit.util.Vector;
@@ -105,7 +106,8 @@ public class ErodeBrush extends Brush
         for (final BlockWrapper blockWrapper : blockChangeTracker.getAll())
         {
             undo.put(blockWrapper.getBlock());
-            blockWrapper.getBlock().setTypeIdAndData(blockWrapper.getMaterial().getId(), blockWrapper.getData(), true);
+            blockWrapper.getBlock().setType(blockWrapper.getMaterial(), false);
+            blockWrapper.getBlock().setBlockData(blockWrapper.getData(), true);
         }
 
         v.owner().storeUndo(undo);
@@ -154,7 +156,7 @@ public class ErodeBrush extends Brush
                             }
                         }
 
-                        BlockWrapper currentMaterial = new BlockWrapper(null, Material.AIR, (byte) 0);
+                        BlockWrapper currentMaterial = new BlockWrapper(null, Material.AIR, Material.AIR.createBlockData());
                         int amount = 0;
 
                         for (final BlockWrapper wrapper : blockCount.keySet())
@@ -210,7 +212,7 @@ public class ErodeBrush extends Brush
 
                         if (count >= erosionPreset.getErosionFaces())
                         {
-                            blockChangeTracker.put(currentPosition, new BlockWrapper(currentBlock.getBlock(), Material.AIR, (byte) 0), currentIteration);
+                            blockChangeTracker.put(currentPosition, new BlockWrapper(currentBlock.getBlock(), Material.AIR, Material.AIR.createBlockData()), currentIteration);
                         }
                     }
                 }
@@ -415,17 +417,17 @@ public class ErodeBrush extends Brush
 
         private final Block block;
         private final Material material;
-        private final byte data;
+        private final BlockData data;
 
         @SuppressWarnings("deprecation")
 		public BlockWrapper(final Block block)
         {
             this.block = block;
-            this.data = block.getData();
+            this.data = block.getBlockData();
             this.material = block.getType();
         }
 
-        public BlockWrapper(final Block block, final Material material, final byte data)
+        public BlockWrapper(final Block block, final Material material, final BlockData data)
         {
             this.block = block;
             this.material = material;
@@ -443,7 +445,7 @@ public class ErodeBrush extends Brush
         /**
          * @return the data
          */
-        public byte getData()
+        public BlockData getData()
         {
             return this.data;
         }
@@ -472,9 +474,7 @@ public class ErodeBrush extends Brush
             switch (this.material)
             {
                 case WATER:
-                case STATIONARY_WATER:
                 case LAVA:
-                case STATIONARY_LAVA:
                     return true;
                 default:
                     return false;

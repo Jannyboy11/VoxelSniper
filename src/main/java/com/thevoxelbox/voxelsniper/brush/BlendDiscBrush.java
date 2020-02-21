@@ -6,6 +6,10 @@ import com.thevoxelbox.voxelsniper.Undo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
+import java.util.EnumMap;
+import java.util.ListIterator;
+import java.util.Map;
+
 /**
  * http://www.voxelwiki.com/minecraft/Voxelsniper#Blend_Brushes
  */
@@ -25,8 +29,8 @@ public class BlendDiscBrush extends BlendBrushBase
     {
         final int brushSize = v.getBrushSize();
         final int brushSizeDoubled = 2 * brushSize;
-        final int[][] oldMaterials = new int[2 * (brushSize + 1) + 1][2 * (brushSize + 1) + 1]; // Array that holds the original materials plus a buffer
-        final int[][] newMaterials = new int[brushSizeDoubled + 1][brushSizeDoubled + 1]; // Array that holds the blended materials
+        final Material[][] oldMaterials = new Material[2 * (brushSize + 1) + 1][2 * (brushSize + 1) + 1]; // Array that holds the original materials plus a buffer
+        final Material[][] newMaterials = new Material[brushSizeDoubled + 1][brushSizeDoubled + 1]; // Array that holds the blended materials
 
         // Log current materials into oldmats
         for (int x = 0; x <= 2 * (brushSize + 1); x++)
@@ -51,9 +55,9 @@ public class BlendDiscBrush extends BlendBrushBase
         {
             for (int z = 0; z <= brushSizeDoubled; z++)
             {
-                final int[] materialFrequency = new int[BlendBrushBase.getMaxBlockMaterialID() + 1]; // Array that tracks frequency of materials neighboring given block
+                final Map<Material, Integer> materialFrequency = new EnumMap<>(Material.class);
                 int modeMatCount = 0;
-                int modeMatId = 0;
+                Material modeMatId = Material.AIR;
                 boolean tiecheck = true;
 
                 for (int m = -1; m <= 1; m++)
@@ -62,24 +66,25 @@ public class BlendDiscBrush extends BlendBrushBase
                     {
                         if (!(m == 0 && n == 0))
                         {
-                            materialFrequency[oldMaterials[x + 1 + m][z + 1 + n]]++;
+                            materialFrequency.compute(oldMaterials[x + 1 + m][z + 1 + n], (mat, i) -> i == null ? 1 : i + 1);
                         }
                     }
                 }
 
                 // Find most common neighboring material.
-                for (int i = 0; i <= BlendBrushBase.getMaxBlockMaterialID(); i++)
+                Material i = null;
+                for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext(); i = it.next())
                 {
-                    if (materialFrequency[i] > modeMatCount && !(this.excludeAir && i == Material.AIR.getId()) && !(this.excludeWater && (i == Material.WATER.getId() || i == Material.STATIONARY_WATER.getId())))
+                    if (materialFrequency.getOrDefault(i, 0) > modeMatCount && !(this.excludeAir && i.isAir()) && !(this.excludeWater && i == Material.WATER))
                     {
-                        modeMatCount = materialFrequency[i];
+                        modeMatCount = materialFrequency.get(i);
                         modeMatId = i;
                     }
                 }
                 // Make sure there'world not a tie for most common
-                for (int i = 0; i < modeMatId; i++)
+                for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext() && i.ordinal() < modeMatId.ordinal(); i = it.next())
                 {
-                    if (materialFrequency[i] == modeMatCount && !(this.excludeAir && i == Material.AIR.getId()) && !(excludeWater && (i == Material.WATER.getId() || i == Material.STATIONARY_WATER.getId())))
+                    if (materialFrequency.getOrDefault(i, 0) == modeMatCount && !(this.excludeAir && i.isAir()) && !(excludeWater && i == Material.WATER))
                     {
                         tiecheck = false;
                     }
@@ -105,7 +110,7 @@ public class BlendDiscBrush extends BlendBrushBase
             {
                 if (xSquared + Math.pow(z - brushSize - 1, 2) <= rSquared)
                 {
-                    if (!(this.excludeAir && newMaterials[x][z] == Material.AIR.getId()) && !(this.excludeWater && (newMaterials[x][z] == Material.WATER.getId() || newMaterials[x][z] == Material.STATIONARY_WATER.getId())))
+                    if (!(this.excludeAir && newMaterials[x][z].isAir()) && !(this.excludeWater && (newMaterials[x][z] == Material.WATER)))
                     {
                         if (this.getBlockIdAt(this.getTargetBlock().getX() - brushSize + x, this.getTargetBlock().getY(), this.getTargetBlock().getZ() - brushSize + z) != newMaterials[x][z])
                         {

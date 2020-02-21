@@ -9,6 +9,7 @@ import com.thevoxelbox.voxelsniper.Undo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 
 // Proposal: Use /v and /vr for leave and wood material // or two more parameters -- Monofraps
@@ -25,8 +26,8 @@ public class GenerateTreeBrush extends Brush
     private ArrayList<Block> branchBlocks = new ArrayList<Block>();
     private Undo undo;
     // If these default values are edited. Remember to change default values in the default preset.
-    private byte leafType = 0;
-    private byte woodType = 0;
+    private byte leafType = 0;  //TODO obsolete after 'the flattening'
+    private byte woodType = 0;  //TODO obsolete after 'the flattening'
     private boolean rootFloat = false;
     private int startHeight = 0;
     private int rootLength = 9;
@@ -88,7 +89,7 @@ public class GenerateTreeBrush extends Brush
             }
 
             // Add block to undo function.
-            if (this.getBlockIdAt(blockPositionX, blockPositionY, blockPositionZ) != Material.LOG.getId())
+            if (!isLog(this.getBlockIdAt(blockPositionX, blockPositionY, blockPositionZ)))
             {
                 this.undo.put(this.clampY(blockPositionX, blockPositionY, blockPositionZ));
             }
@@ -102,6 +103,10 @@ public class GenerateTreeBrush extends Brush
         blockPositionX = originX;
         blockPositionY = originY;
         blockPositionZ = originZ;
+    }
+
+    private static boolean isLog(Material material) {
+        return Tag.LOGS.isTagged(material);
     }
 
     @SuppressWarnings("deprecation")

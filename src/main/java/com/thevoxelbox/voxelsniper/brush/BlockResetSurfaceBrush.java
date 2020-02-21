@@ -29,6 +29,7 @@ import org.bukkit.block.data.BlockData;
  */
 public class BlockResetSurfaceBrush extends Brush
 {
+    //TODO un-duplicate (e.g. BlockResetBrush.java)
     private static final Set<Material> DENIED_UPDATES = EnumSet.noneOf(Material.class);
 
     static

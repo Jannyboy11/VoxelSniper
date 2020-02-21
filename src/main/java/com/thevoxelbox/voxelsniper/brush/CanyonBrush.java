@@ -48,7 +48,7 @@ public class CanyonBrush extends Brush
                     undo.put(block);
                     undo.put(currentYLevelBlock);
 
-                    currentYLevelBlock.setTypeId(block.getTypeId(), false);
+                    currentYLevelBlock.setType(block.getType(), false);
                     block.setType(Material.AIR);
 
                     currentYLevel++;
@@ -56,7 +56,7 @@ public class CanyonBrush extends Brush
 
                 final Block block = chunk.getBlock(x, 0, z);
                 undo.put(block);
-                block.setTypeId(Material.BEDROCK.getId());
+                block.setType(Material.BEDROCK);
 
                 for (int y = 1; y < SHIFT_LEVEL_MIN; y++)
                 {

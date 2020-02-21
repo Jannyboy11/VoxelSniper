@@ -6,14 +6,16 @@ import com.thevoxelbox.voxelsniper.Undo;
 import com.thevoxelbox.voxelsniper.util.BlockWrapper;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 /**
  *
  */
 public class Rot3DBrush extends Brush
 {
-    private final int mode = 0;
+    private final int mode = 0; //TODO why is this NOT an enum???
     private int bSize;
     private int brushSize;
     private BlockWrapper[][][] snap;
@@ -114,7 +116,7 @@ public class Rot3DBrush extends Brush
                     {
                         final Block block = this.clampY(sx, sz, sz);
                         this.snap[x][y][z] = new BlockWrapper(block);
-                        block.setTypeId(0);
+                        block.setType(Material.AIR);
                         sz++;
                     }
                 }
@@ -176,7 +178,7 @@ public class Rot3DBrush extends Brush
                         // after all three, though.
 
                         final BlockWrapper block = this.snap[x][y][z];
-                        if (block.getId() == 0)
+                        if (block.getId().isAir())
                         {
                             continue;
                         }
@@ -204,16 +206,16 @@ public class Rot3DBrush extends Brush
                         {
                             // smart fill stuff
                             final int fy = y + this.getTargetBlock().getY() - this.bSize;
-                            final int a = this.getBlockIdAt(fx + 1, fy, fz);
-                            final byte aData = this.getBlockDataAt(fx + 1, fy, fz);
-                            final int d = this.getBlockIdAt(fx - 1, fy, fz);
-                            final byte dData = this.getBlockDataAt(fx - 1, fy, fz);
-                            final int c = this.getBlockIdAt(fx, fy, fz + 1);
-                            final int b = this.getBlockIdAt(fx, fy, fz - 1);
-                            final byte bData = this.getBlockDataAt(fx, fy, fz - 1);
+                            final Material a = this.getBlockIdAt(fx + 1, fy, fz);
+                            final BlockData aData = this.getBlockDataAt(fx + 1, fy, fz);
+                            final Material d = this.getBlockIdAt(fx - 1, fy, fz);
+                            final BlockData dData = this.getBlockDataAt(fx - 1, fy, fz);
+                            final Material c = this.getBlockIdAt(fx, fy, fz + 1);
+                            final Material b = this.getBlockIdAt(fx, fy, fz - 1);
+                            final BlockData bData = this.getBlockDataAt(fx, fy, fz - 1);
 
-                            int winner;
-                            byte winnerData;
+                            Material winner;
+                            BlockData winnerData;
 
                             if (a == b || a == c || a == d)
                             { // I figure that since we are already narrowing it down to ONLY the holes left behind, it

@@ -127,6 +127,7 @@ public class OverlayBrush extends PerformBrush
 
                                         switch (this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z))
                                         {
+                                            //TODO WTF are these IDs?
                                             case 1:
                                             case 2:
                                             case 3:

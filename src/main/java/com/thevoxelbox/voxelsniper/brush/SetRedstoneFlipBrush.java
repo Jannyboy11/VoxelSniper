@@ -6,6 +6,7 @@ import com.thevoxelbox.voxelsniper.Undo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Repeater;
 
 /**
  * @author Voxel
@@ -59,34 +60,12 @@ public class SetRedstoneFlipBrush extends Brush
     @SuppressWarnings("deprecation")
 	private void perform(final Block bl)
     {
-        if (bl.getType() == Material.DIODE_BLOCK_ON || bl.getType() == Material.DIODE_BLOCK_OFF)
+        if (bl.getType() == Material.REPEATER) //TODO why only repeaters?
         {
-            if (this.northSouth)
-            {
-                if ((bl.getData() % 4) == 1)
-                {
-                    this.undo.put(bl);
-                    bl.setData((byte) (bl.getData() + 2));
-                }
-                else if ((bl.getData() % 4) == 3)
-                {
-                    this.undo.put(bl);
-                    bl.setData((byte) (bl.getData() - 2));
-                }
-            }
-            else
-            {
-                if ((bl.getData() % 4) == 2)
-                {
-                    this.undo.put(bl);
-                    bl.setData((byte) (bl.getData() - 2));
-                }
-                else if ((bl.getData() % 4) == 0)
-                {
-                    this.undo.put(bl);
-                    bl.setData((byte) (bl.getData() + 2));
-                }
-            }
+            this.undo.put(bl);
+            Repeater repeater = (Repeater) bl.getBlockData();
+            repeater.setPowered(!repeater.isPowered());
+            bl.setBlockData(repeater);
         }
     }
 

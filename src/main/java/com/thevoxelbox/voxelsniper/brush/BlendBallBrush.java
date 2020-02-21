@@ -59,7 +59,7 @@ public class BlendBallBrush extends BlendBrushBase
             }
         }
 
-        // Blend materials
+        // Blend materials //TODO un-duplicate this. share code with other brushes
         for (int x = 0; x <= brushSizeDoubled; x++)
         {
             for (int y = 0; y <= brushSizeDoubled; y++)

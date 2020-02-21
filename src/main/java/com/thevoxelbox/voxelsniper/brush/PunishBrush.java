@@ -169,7 +169,7 @@ public class PunishBrush extends PerformBrush
                                 }
                                 target = location.clone();
                                 target.add(x, y, z);
-                                ((Player) entity).sendBlockChange(target, v.getVoxelId(), v.getData());
+                                ((Player) entity).sendBlockChange(target, v.getVoxelId().createBlockData().merge(v.getData()));
                             }
                         }
                     }

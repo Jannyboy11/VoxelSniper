@@ -5,6 +5,7 @@ import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Undo;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 /**
@@ -32,7 +33,7 @@ public class RulerBrush extends Brush
     @Override
     protected final void arrow(final SnipeData v)
     {
-        final int voxelMaterialId = v.getVoxelId();
+        final Material voxelMaterialId = v.getVoxelId();
         this.coords = this.getTargetBlock().getLocation().toVector();
 
         if (this.xOff == 0 && this.yOff == 0 && this.zOff == 0)
