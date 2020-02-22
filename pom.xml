@@ -71,7 +71,6 @@
             <groupId>org.mcstats.bukkit</groupId>
             <artifactId>metrics</artifactId>
             <version>R8-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
@@ -80,21 +79,19 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>28.2-jre</version>
+        </dependency>
+        <dependency>
             <groupId>com.martiansoftware</groupId>
             <artifactId>jsap</artifactId>
             <version>2.1</version>
-            <scope>compile</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.google.guava</groupId>-->
-<!--            <artifactId>guava</artifactId>-->
-<!--            <version>17.0</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -136,6 +133,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
+                    <source>11</source> <!-- used by the javadoc plugin to generate links to standard lib classes -->
                     <release>11</release>
                 </configuration>
             </plugin>
@@ -143,7 +141,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -183,6 +181,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <links>
+                        <link>https://hub.spigotmc.org/javadocs/bukkit/</link>
+                    </links>
+
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -197,16 +202,6 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>org.bukkit:craftbukkit</exclude>
-                                    <exclude>org.bukkit:bukkit</exclude>
-                                    <exclude>junit:junit</exclude>
-                                </excludes>
-                                <includes>
-                                    <include>org.mcstats.*:*</include>
-                                </includes>
-                            </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.mcstats</pattern>
