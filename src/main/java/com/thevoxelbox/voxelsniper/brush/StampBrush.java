@@ -2,6 +2,7 @@ package com.thevoxelbox.voxelsniper.brush;
 
 import java.util.HashSet;
 
+import com.thevoxelbox.voxelsniper.Materials;
 import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Undo;
@@ -86,62 +87,6 @@ public class StampBrush extends Brush
         //return (id > 7 && id < 14);
 
         return id == Material.BUBBLE_COLUMN || id == Material.WATER || id == Material.LAVA && id.hasGravity();
-    }
-
-    /**
-     * @param id
-     *
-     * @return
-     */
-    protected static final boolean fallsOff(final Material id)
-    {
-        if (Tag.FLOWERS.isTagged(id)) return true;
-        if (Tag.FLOWER_POTS.isTagged(id)) return true;
-        if (Tag.SAPLINGS.isTagged(id)) return true;
-        if (Tag.BANNERS.isTagged(id)) return true;
-        if (Tag.SIGNS.isTagged(id)) return true;
-        if (Tag.BUTTONS.isTagged(id)) return true;
-        if (Tag.CARPETS.isTagged(id)) return true;
-        if (Tag.CROPS.isTagged(id)) return true;
-        if (Tag.DOORS.isTagged(id)) return true;
-        if (Tag.RAILS.isTagged(id)) return true;
-        if (Tag.UNDERWATER_BONEMEALS.isTagged(id)) return true;
-        if (Tag.WOODEN_PRESSURE_PLATES.isTagged(id)) return true;
-        if (Tag.BEDS.isTagged(id)) return true;
-        //BUKKIT WHY ARE CHORALS NOT IN THE TAG API YET? //TODO PR @ SpigotMC stash?
-        Tag<Material> choralPlants = Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("chorals"), Material.class);
-        if (choralPlants.isTagged(id)) return true;
-
-        switch (id)
-        {
-            case BROWN_MUSHROOM:
-            case RED_MUSHROOM:
-            case TORCH:
-            case REDSTONE_TORCH:
-            case FIRE:
-            case REDSTONE_WIRE:
-            case WHEAT_SEEDS:
-            case LADDER:
-            case LEVER:
-            case STONE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case SNOW:
-            case SUGAR_CANE:
-            case CACTUS:
-            case BAMBOO_SAPLING:
-            case BAMBOO:
-            case REPEATER:
-            case COMPARATOR:
-            case LILY_PAD:
-            case DRAGON_EGG:
-            case CHORUS_FLOWER:
-            case CHORUS_PLANT:
-            case VINE:
-                return true;
-        }
-
-        return false;
     }
 
     /**
@@ -266,11 +211,11 @@ public class StampBrush extends Brush
             this.solid.clear();
             for (final BlockWrapper block : this.clone)
             {
-                if (this.fallsOff(block.id))
+                if (Materials.fallsOff(block.id))
                 {
                     this.fall.add(block);
                 }
-                else if (this.falling(block.id))
+                else if (falling(block.id))
                 {
                     this.drop.add(block);
                 }

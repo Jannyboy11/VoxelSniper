@@ -37,7 +37,7 @@ public class OverlayBrush extends PerformBrush
             {
                 // check if column is valid
                 // column is valid if it has no solid block right above the clicked layer
-                final int materialId = this.getBlockIdAt(this.getTargetBlock().getX() + x, this.getTargetBlock().getY() + 1, this.getTargetBlock().getZ() + z);
+                final Material materialId = this.getBlockIdAt(this.getTargetBlock().getX() + x, this.getTargetBlock().getY() + 1, this.getTargetBlock().getZ() + z);
                 if (isIgnoredBlock(materialId))
                 {
                     if ((Math.pow(x, 2) + Math.pow(z, 2)) <= brushSizeSquared)
@@ -45,12 +45,12 @@ public class OverlayBrush extends PerformBrush
                         for (int y = this.getTargetBlock().getY(); y > 0; y--)
                         {
                             // check for surface
-                            final int layerBlockId = this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z);
+                            final Material layerBlockId = this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z);
                             if (!isIgnoredBlock(layerBlockId))
                             {
                                 for (int currentDepth = y; y - currentDepth < depth; currentDepth--)
                                 {
-                                    final int currentBlockId = this.getBlockIdAt(this.getTargetBlock().getX() + x, currentDepth, this.getTargetBlock().getZ() + z);
+                                    final Material currentBlockId = this.getBlockIdAt(this.getTargetBlock().getX() + x, currentDepth, this.getTargetBlock().getZ() + z);
                                     if (isOverrideableMaterial(currentBlockId))
                                     {
                                         this.current.perform(this.clampY(this.getTargetBlock().getX() + x, currentDepth, this.getTargetBlock().getZ() + z));
@@ -68,31 +68,31 @@ public class OverlayBrush extends PerformBrush
     }
 
     @SuppressWarnings("deprecation")
-	private boolean isIgnoredBlock(int materialId)
+	private boolean isIgnoredBlock(Material materialId)
     {
-        return materialId == 9 || materialId == 8 || Material.getMaterial(materialId).isTransparent() || materialId == Material.CACTUS.getId();
+        return materialId == Material.WATER || materialId.isTransparent() || materialId == Material.CACTUS;
     }
 
     @SuppressWarnings("deprecation")
-	private boolean isOverrideableMaterial(int materialId)
+	private boolean isOverrideableMaterial(Material materialId)
     {
-        if (allBlocks && !(materialId == Material.AIR.getId()))
+        if (allBlocks && !materialId.isAir())
         {
             return true;
         }
 
         switch (materialId)
         {
-            case 1:
-            case 2:
-            case 3:
-            case 12:
-            case 13:
-            case 24:
-            case 48:
-            case 82:
-            case 49:
-            case 78:
+            case STONE:                 //case 1:
+            case GRASS:                 //case 2:
+            case DIRT:                  //case 3:
+            case SAND:                  //case 12:
+            case GRAVEL:                //case 13:
+            case SANDSTONE:             //case 24:
+            case MOSSY_COBBLESTONE:     //case 48:
+            case CLAY:                  //case 82:
+            case OBSIDIAN:              //case 49:
+            case SNOW:                  //case 78:
                 return true;
 
             default:
@@ -117,9 +117,9 @@ public class OverlayBrush extends PerformBrush
                     { // if haven't already found the surface in this column
                         if ((Math.pow(x, 2) + Math.pow(z, 2)) <= brushSizeSquared)
                         { // if inside of the column...
-                            if (this.getBlockIdAt(this.getTargetBlock().getX() + x, y - 1, this.getTargetBlock().getZ() + z) != 0)
+                            if (!this.getBlockIdAt(this.getTargetBlock().getX() + x, y - 1, this.getTargetBlock().getZ() + z).isAir())
                             { // if not a floating block (like one of Notch'world pools)
-                                if (this.getBlockIdAt(this.getTargetBlock().getX() + x, y + 1, this.getTargetBlock().getZ() + z) == 0)
+                                if (this.getBlockIdAt(this.getTargetBlock().getX() + x, y + 1, this.getTargetBlock().getZ() + z).isAir())
                                 { // must start at surface... this prevents it filling stuff in if
                                     // you click in a wall and it starts out below surface.
                                     if (!this.allBlocks)
@@ -128,19 +128,19 @@ public class OverlayBrush extends PerformBrush
                                         switch (this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z))
                                         {
                                             //TODO WTF are these IDs?
-                                            case 1:
-                                            case 2:
-                                            case 3:
-                                            case 12:
-                                            case 13:
-                                            case 14:
-                                            case 15:
-                                            case 16:
-                                            case 24:
-                                            case 48:
-                                            case 82:
-                                            case 49:
-                                            case 78:
+                                            case STONE:             //case 1:
+                                            case GRASS:             //case 2:
+                                            case DIRT:              //case 3:
+                                            case SAND:              //case 12:
+                                            case GRAVEL:            //case 13:
+                                            case GOLD_ORE:          //case 14:
+                                            case IRON_ORE:          //case 15:
+                                            case COAL_ORE:          //case 16:
+                                            case SANDSTONE:         //case 24:
+                                            case MOSSY_COBBLESTONE: //case 48:
+                                            case CLAY:              //case 82:
+                                            case OBSIDIAN:          //case 49:
+                                            case SNOW:              //case 78:
                                                 for (int d = 1; (d < this.depth + 1); d++)
                                                 {
                                                     this.current.perform(this.clampY(this.getTargetBlock().getX() + x, y + d, this.getTargetBlock().getZ() + z)); // fills down as many layers as you specify

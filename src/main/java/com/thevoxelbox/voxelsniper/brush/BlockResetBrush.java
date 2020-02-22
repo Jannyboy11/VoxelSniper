@@ -25,6 +25,7 @@ public class BlockResetBrush extends Brush
         DENIED_UPDATES.add(Material.FURNACE);
         DENIED_UPDATES.add(Material.SMOKER);
         DENIED_UPDATES.add(Material.BLAST_FURNACE);
+        DENIED_UPDATES.add(Material.CAMPFIRE);
         DENIED_UPDATES.add(Material.BREWING_STAND);
         DENIED_UPDATES.add(Material.REDSTONE_TORCH);
         DENIED_UPDATES.add(Material.REDSTONE_WALL_TORCH);
