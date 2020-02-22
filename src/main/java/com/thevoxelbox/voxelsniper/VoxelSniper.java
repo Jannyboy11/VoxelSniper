@@ -68,14 +68,7 @@ public class VoxelSniper extends JavaPlugin
     {
         if (sender instanceof Player)
         {
-            String[] arguments = args;
-
-            if (arguments == null)
-            {
-                arguments = new String[0];
-            }
-
-            return voxelSniperListener.onCommand((Player) sender, arguments, command.getName());
+            return voxelSniperListener.onCommand((Player) sender, args, command.getName());
         }
 
         getLogger().info("Only Players can execute commands.");

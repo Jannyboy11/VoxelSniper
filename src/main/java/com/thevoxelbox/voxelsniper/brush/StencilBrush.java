@@ -40,9 +40,9 @@ public class StencilBrush extends Brush
     private short zRef;
     private short yRef;
     private byte pasteParam = 0;
-    private int[] firstPoint = new int[3];
-    private int[] secondPoint = new int[3];
-    private int[] pastePoint = new int[3];
+    private int[] firstPoint = new int[3];      // X Z Y
+    private int[] secondPoint = new int[3];     // X Z Y
+    private int[] pastePoint = new int[3];      // X Z Y
     private byte point = 1;
 
     /**
@@ -263,14 +263,15 @@ public class StencilBrush extends Brush
         final File file = new File("plugins/VoxelSniper/stencils/" + this.filename + ".vstencil");
         try
         {
+            //why is the order x z y???
             this.x = (short) (Math.abs((this.firstPoint[0] - this.secondPoint[0])) + 1);
             this.z = (short) (Math.abs((this.firstPoint[1] - this.secondPoint[1])) + 1);
             this.y = (short) (Math.abs((this.firstPoint[2] - this.secondPoint[2])) + 1);
-            this.xRef = (short) ((this.firstPoint[0] > this.secondPoint[0]) ? (this.pastePoint[0] - this.secondPoint[0]) : (this.pastePoint[0] - this.firstPoint[0]));
-            this.zRef = (short) ((this.firstPoint[1] > this.secondPoint[1]) ? (this.pastePoint[1] - this.secondPoint[1]) : (this.pastePoint[1] - this.firstPoint[1]));
-            this.yRef = (short) ((this.firstPoint[2] > this.secondPoint[2]) ? (this.pastePoint[2] - this.secondPoint[2]) : (this.pastePoint[2] - this.firstPoint[2]));
+            this.xRef = (short) (this.pastePoint[0] - Math.min(this.firstPoint[0], this.secondPoint[0]));
+            this.zRef = (short) (this.pastePoint[1] - Math.min(this.firstPoint[1], this.secondPoint[1]));
+            this.yRef = (short) (this.pastePoint[2] - Math.min(this.firstPoint[2], this.secondPoint[2]));
 
-            if ((this.x * this.y * this.z) > 50000)
+            if ((this.x * this.y * this.z) > 50_000)
             {
                 v.sendMessage(ChatColor.AQUA + "Volume exceeds maximum limit.");
                 return;
@@ -279,9 +280,9 @@ public class StencilBrush extends Brush
             Files.createParentDirs(file);
             file.createNewFile();
             final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-            int blockPositionX = (this.firstPoint[0] > this.secondPoint[0]) ? this.secondPoint[0] : this.firstPoint[0];
-            int blockPositionZ = (this.firstPoint[1] > this.secondPoint[1]) ? this.secondPoint[1] : this.firstPoint[1];
-            int blockPositionY = (this.firstPoint[2] > this.secondPoint[2]) ? this.secondPoint[2] : this.firstPoint[2];
+            int blockPositionX = Math.min(this.firstPoint[0], this.secondPoint[0]);
+            int blockPositionZ = Math.min(this.firstPoint[1], this.secondPoint[1]);
+            int blockPositionY = Math.min(this.firstPoint[2], this.secondPoint[2]);
             out.writeShort(this.x);
             out.writeShort(this.z);
             out.writeShort(this.y);

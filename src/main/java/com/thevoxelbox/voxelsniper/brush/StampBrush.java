@@ -84,7 +84,8 @@ public class StampBrush extends Brush
     protected static final boolean falling(final Material id)
     {
         //return (id > 7 && id < 14);
-        return id.hasGravity();
+
+        return id == Material.BUBBLE_COLUMN || id == Material.WATER || id == Material.LAVA && id.hasGravity();
     }
 
     /**

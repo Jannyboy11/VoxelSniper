@@ -475,6 +475,7 @@ public class ErodeBrush extends Brush
             {
                 case WATER:
                 case LAVA:
+                case BUBBLE_COLUMN:
                     return true;
                 default:
                     return false;

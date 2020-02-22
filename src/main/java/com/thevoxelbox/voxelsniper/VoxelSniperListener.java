@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -135,5 +136,11 @@ public class VoxelSniperListener implements Listener
         {
             sniper.displayInfo();
         }
+    }
+
+    @EventHandler
+    public final void onQuit(final PlayerQuitEvent event) {
+        //don't leak
+        plugin.getSniperManager().removeSniper(event.getPlayer());
     }
 }
