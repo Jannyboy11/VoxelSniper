@@ -463,7 +463,7 @@ public class ErodeBrush extends Brush
          */
         public boolean isEmpty()
         {
-            return this.material == Material.AIR;
+            return this.material == null || this.material.isAir();
         }
 
         /**

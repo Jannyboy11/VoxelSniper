@@ -164,7 +164,7 @@ public class SnowConeBrush extends Brush
                 break;
             default:
                 Block blockAbove = getTargetBlock().getRelative(BlockFace.UP);
-                if (blockAbove != null && blockAbove.getType() == Material.AIR)
+                if (blockAbove != null && blockAbove.getType().isAir())
                 {
                     addSnow(v, blockAbove);
                 }

@@ -169,7 +169,7 @@ public class RangeBlockHelper
     @SuppressWarnings("deprecation")
 	public final Block getFaceBlock()
     {
-        while ((this.getNextBlock() != null) && (this.getCurBlock().getTypeId() == 0))
+        while ((this.getNextBlock() != null) && (this.getCurBlock().getType().isAir()))
         {
         }
 

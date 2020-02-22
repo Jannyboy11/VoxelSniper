@@ -54,6 +54,7 @@ public class VoxelBrushCommand extends VoxelCommand
             }
             catch (NumberFormatException ingored)
             {
+                //ignore, try to continue
             }
 
             Class<? extends IBrush> brush = plugin.getBrushManager().getBrushForHandle(args[0]);
@@ -88,6 +89,5 @@ public class VoxelBrushCommand extends VoxelCommand
                 return true;
             }
         }
-        return false;
     }
 }

@@ -163,7 +163,7 @@ public class PunishBrush extends PerformBrush
                                 target.setX(location.getX() + x);
                                 target.setY(location.getY() + y);
                                 target.setZ(location.getZ() + z);
-                                if (this.hypnoAffectLandscape && target.getBlock().getType() == Material.AIR)
+                                if (this.hypnoAffectLandscape && target.getBlock().getType().isAir())
                                 {
                                     continue;
                                 }

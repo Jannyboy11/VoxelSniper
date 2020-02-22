@@ -153,7 +153,7 @@ public class StampBrush extends Brush
             this.solid.clear();
             for (final BlockWrapper block : this.clone)
             {
-                if (fallsOff(block.id))
+                if (Materials.fallsOff(block.id))
                 {
                     this.fall.add(block);
                 }
@@ -269,7 +269,7 @@ public class StampBrush extends Brush
             this.solid.clear();
             for (final BlockWrapper block : this.clone)
             {
-                if (this.fallsOff(block.id))
+                if (Materials.fallsOff(block.id))
                 {
                     this.fall.add(block);
                 }

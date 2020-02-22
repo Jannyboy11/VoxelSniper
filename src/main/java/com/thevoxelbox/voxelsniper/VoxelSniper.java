@@ -163,8 +163,8 @@ public class VoxelSniper extends JavaPlugin
         brushManager.registerSniperBrush(SplatterVoxelBrush.class, "sv", "splattervoxel");
         brushManager.registerSniperBrush(SplatterDiscBrush.class, "svd", "splatvoxeldisc");
         brushManager.registerSniperBrush(SplineBrush.class, "sp", "spline");
-        brushManager.registerSniperBrush(StencilBrush.class, "st", "stencil");
-        brushManager.registerSniperBrush(StencilListBrush.class, "sl", "stencillist");
+        //brushManager.registerSniperBrush(StencilBrush.class, "st", "stencil");                                //TODO bother with stencils later...
+        //brushManager.registerSniperBrush(StencilListBrush.class, "sl", "stencillist");                        //TODO bother with stencils later...
         brushManager.registerSniperBrush(ThreePointCircleBrush.class, "tpc", "threepointcircle");
         brushManager.registerSniperBrush(TreeSnipeBrush.class, "t", "tree", "treesnipe");
         brushManager.registerSniperBrush(TriangleBrush.class, "tri", "triangle");

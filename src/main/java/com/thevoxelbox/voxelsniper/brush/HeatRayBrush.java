@@ -124,7 +124,7 @@ public class HeatRayBrush extends Brush
                             else if (airDensity >= HeatRayBrush.REQUIRED_AIR_DENSITY)
                             {
                                 undo.put(currentBlock);
-                                if (currentBlock.getType() != Material.AIR)
+                                if (!currentBlock.getType().isAir())
                                 {
                                     currentBlock.setType(Material.AIR);
                                 }
