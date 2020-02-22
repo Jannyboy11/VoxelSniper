@@ -310,7 +310,13 @@ public class ErodeBrush extends Brush
      */
     private enum Preset
     {
-        MELT(new ErosionPreset(2, 1, 5, 1)), FILL(new ErosionPreset(5, 1, 2, 1)), SMOOTH(new ErosionPreset(3, 1, 3, 1)), LIFT(new ErosionPreset(6, 0, 1, 1)), FLOATCLEAN(new ErosionPreset(6, 1, 6, 1));
+        //TODO make individual values available
+        MELT(new ErosionPreset(2, 1, 5, 1)),
+        FILL(new ErosionPreset(5, 1, 2, 1)),
+        SMOOTH(new ErosionPreset(3, 1, 3, 1)),
+        LIFT(new ErosionPreset(6, 0, 1, 1)),
+        FLOATCLEAN(new ErosionPreset(6, 1, 6, 1));
+
         private ErosionPreset preset;
 
         Preset(final ErosionPreset preset)
@@ -348,7 +354,6 @@ public class ErodeBrush extends Brush
         {
             return this.preset;
         }
-
 
     }
 

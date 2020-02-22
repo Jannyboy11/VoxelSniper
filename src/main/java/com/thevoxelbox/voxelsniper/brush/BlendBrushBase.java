@@ -64,15 +64,6 @@ public abstract class BlendBrushBase extends Brush
         }
     }
 
-    /**
-     * @deprecated use {@link #getBlockIterator()} or {@link #getBlockCount()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    protected static int getMaxBlockMaterialID()
-    {
-        return blocks.get(blocks.size() - 1).getId();
-    }
-
     protected static int getBlockCount() {
         return blocks.size();
     }
