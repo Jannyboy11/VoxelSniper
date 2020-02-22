@@ -103,15 +103,6 @@ public abstract class Brush implements IBrush
     {
     }
 
-    @Override
-    public abstract void info(Message vm);
-
-    @Override
-    public void parameters(final String[] par, final SnipeData v)
-    {
-        v.sendMessage(ChatColor.RED + "This brush does not accept additional parameters.");
-    }
-
     /**
      * Overridable getTarget method.
      *

@@ -28,7 +28,7 @@ import org.bukkit.ChatColor;
  * while guaranteeing that all sensible combinations will be made.  Additionally, the names will be VERY consistent
  * 
  * EX Old System: /b b isrcup (use /v, /vi, /vr and /vir, update graphics and no physics)
- * EX New System: /b b ccup   (two characters shorter, good because snipers have been complaing about keystrokes)
+ * EX New System: /b b ccup   (two characters shorter, good because snipers have been complaining about keystrokes)
  * 
  */
 
@@ -111,36 +111,14 @@ public enum PerformerE
         vPerformer p;
         try
         {
-            try
-            {
-                p = pclass.getConstructor().newInstance();
-                return p;
-            }
-            catch (InstantiationException ex)
-            {
-                Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (IllegalAccessException ex)
-            {
-                Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (IllegalArgumentException ex)
-            {
-                Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (InvocationTargetException ex)
-            {
-                Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            p = pclass.getConstructor().newInstance();
+            return p;
         }
-        catch (NoSuchMethodException ex)
+        catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
         {
             Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch (SecurityException ex)
-        {
-            Logger.getLogger(PerformerE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
         return null;
     }
 

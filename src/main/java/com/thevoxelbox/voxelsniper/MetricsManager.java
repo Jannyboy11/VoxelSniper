@@ -50,11 +50,7 @@ public final class MetricsManager
      */
     public static void increaseBrushUsage(String brushName)
     {
-        if (brushUsageCounter.get(brushName) == null)
-        {
-            brushUsageCounter.put(brushName, 0);
-        }
-        brushUsageCounter.put(brushName, brushUsageCounter.get(brushName));
+        brushUsageCounter.compute(brushName, (k, v) -> v == null ? 1 : v + 1);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.thevoxelbox.voxelsniper.command;
 
+import com.thevoxelbox.voxelsniper.Brushes;
 import com.thevoxelbox.voxelsniper.SnipeData;
 import com.thevoxelbox.voxelsniper.Sniper;
 import com.thevoxelbox.voxelsniper.VoxelSniper;
@@ -11,7 +12,8 @@ import com.thevoxelbox.voxelsniper.event.SniperBrushSizeChangedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class VoxelBrushCommand extends VoxelCommand
 {
@@ -54,7 +56,7 @@ public class VoxelBrushCommand extends VoxelCommand
             }
             catch (NumberFormatException ingored)
             {
-                //ignore, try to continue
+                //ignore. player did not enter a brush size. try to continue
             }
 
             Class<? extends IBrush> brush = plugin.getBrushManager().getBrushForHandle(args[0]);
@@ -78,15 +80,68 @@ public class VoxelBrushCommand extends VoxelCommand
                         currentBrush.parameters(parameters, snipeData);
                         return true;
                     }
+                } else {
+                    SniperBrushChangedEvent event = new SniperBrushChangedEvent(sniper, currentToolId, orignalBrush, sniper.getBrush(currentToolId));
+                    plugin.getServer().getPluginManager().callEvent(event);
+                    sniper.displayInfo();
+                    return true;
                 }
-                SniperBrushChangedEvent event = new SniperBrushChangedEvent(sniper, currentToolId, orignalBrush, sniper.getBrush(currentToolId));
-                sniper.displayInfo();
-                return true;
             }
             else
             {
                 player.sendMessage("Couldn't find Brush for brush handle \"" + args[0] + "\"");
                 return true;
+            }
+        }
+    }
+
+    @Override
+    public List<String> onTabComplete(Player player, String[] args)
+    {
+        if (args.length == 0) return Collections.emptyList();
+
+        String firstArg = args[0];
+        if (firstArg.isEmpty())
+        {
+            return Arrays.asList("3", "5", "10", "15", "25", "40", "65");
+        }
+
+        if (args.length == 1) {
+            try {
+                int parsed = Integer.parseInt(firstArg);
+                List<String> result = new ArrayList<>();
+                result.add("" + parsed);
+                for (int i = 1; i < 1024; i *= 2) {
+                    result.add("" + (parsed + i));
+                }
+                return result;
+            } catch (NumberFormatException e) {
+                //first argument not a number - just continue
+            }
+
+            Brushes brushManager = plugin.getBrushManager();
+            Collection<String> brushHandles = brushManager.getRegisteredBrushesMultimap().values();
+            return brushHandles.stream()
+                    .filter(handle -> handle.regionMatches(true, 0, firstArg, 0, firstArg.length()))
+                    .collect(Collectors.toList());
+        } else {
+            Sniper sniper = plugin.getSniperManager().getSniperForPlayer(player);
+            String currentToolId = sniper.getCurrentToolId();
+            SnipeData snipeData = sniper.getSnipeData(currentToolId);
+
+            IBrush currentBrush = sniper.getBrush(currentToolId);
+            String[] parameters = Arrays.copyOfRange(args, 1, args.length);
+            //TODO wtf does a Performer do?
+//            if (currentBrush instanceof Performer)
+//            {
+//                //return ((Performer) currentBrush).completeParameters(parameters, snipeData);
+//                ((Performer) currentBrush).parse(parameters, snipeData);
+//                return true;
+//            }
+//            else
+            {
+                parameters = hackTheArray(parameters);
+                return currentBrush.tabcompleteParameters(parameters, snipeData);
             }
         }
     }

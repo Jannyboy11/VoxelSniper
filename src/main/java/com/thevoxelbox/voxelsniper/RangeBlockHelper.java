@@ -253,7 +253,6 @@ public class RangeBlockHelper
      *
      * @return Block
      */
-    @SuppressWarnings("deprecation")
 	public final Block getTargetBlock()
     {
         this.fromOffworld();

@@ -63,7 +63,7 @@ public class Message
      */
     public void data()
     {
-        snipeData.sendMessage(ChatColor.BLUE + "Data Variable: " + ChatColor.DARK_RED + snipeData.getData());
+        snipeData.sendMessage(ChatColor.BLUE + "Data Variable: " + ChatColor.DARK_RED + snipeData.getData().getAsString(false));
     }
 
     /**
@@ -162,9 +162,9 @@ public class Message
             returnValueBuilder.append("Block Types Selected: ");
             returnValueBuilder.append(ChatColor.AQUA);
 
-            for (BlockData valuePair : snipeData.getVoxelList())
+            for (BlockData blockData : snipeData.getVoxelList())
             {
-                returnValueBuilder.append(valuePair.getAsString(false));
+                returnValueBuilder.append(blockData.getAsString(false));
                 returnValueBuilder.append(" ");
             }
 

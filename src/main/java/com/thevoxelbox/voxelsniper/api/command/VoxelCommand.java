@@ -3,6 +3,8 @@ package com.thevoxelbox.voxelsniper.api.command;
 import com.thevoxelbox.voxelsniper.VoxelSniper;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public abstract class VoxelCommand
 {
 
@@ -20,7 +22,9 @@ public abstract class VoxelCommand
 
     public abstract boolean onCommand(final Player player, final String[] args);
 
-    //TODO tabcompletion??!!
+    public List<String> onTabComplete(final Player player, final String[] args) {
+        return null;
+    }
 
     public String getDescription()
     {
@@ -74,6 +78,11 @@ public abstract class VoxelCommand
         System.arraycopy(args, 0, returnValue, 1, args.length);
         returnValue[0] = "";
         return returnValue;
+    }
+
+    protected static boolean startsWithIgnoreCase(String argument, String prefix)
+    {
+        return argument.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
 }

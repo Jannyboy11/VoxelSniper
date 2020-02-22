@@ -8,10 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Bukkit extension point.
@@ -76,6 +73,18 @@ public class VoxelSniper extends JavaPlugin
     }
 
     @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args)
+    {
+        if (sender instanceof Player)
+        {
+            return voxelSniperListener.onTabComplete((Player) sender, args, command.getName());
+        }
+
+        getLogger().info("Only Player can tabcomplete.");
+        return null;
+    }
+
+    @Override
     public void onEnable()
     {
         VoxelSniper.instance = this;
@@ -100,7 +109,7 @@ public class VoxelSniper extends JavaPlugin
     {
         brushManager.registerSniperBrush(BallBrush.class, "b", "ball");
         brushManager.registerSniperBrush(BiomeBrush.class, "bio", "biome");
-        brushManager.registerSniperBrush(BlendBallBrush.class, "bb", "blendball");
+        brushManager.registerSniperBrush(BlendBallBrush.class, "bb", "blendball");                              //TODO erode blend ball brush (from BetterBrushes)
         brushManager.registerSniperBrush(BlendDiscBrush.class, "bd", "blenddisc");
         brushManager.registerSniperBrush(BlendVoxelBrush.class, "bv", "blendvoxel");
         brushManager.registerSniperBrush(BlendVoxelDiscBrush.class, "bvd", "blendvoxeldisc");
@@ -124,7 +133,7 @@ public class VoxelSniper extends JavaPlugin
         brushManager.registerSniperBrush(EntityBrush.class, "en", "entity");
         brushManager.registerSniperBrush(EntityRemovalBrush.class, "er", "entityremoval");
         brushManager.registerSniperBrush(EraserBrush.class, "erase", "eraser");
-        brushManager.registerSniperBrush(ErodeBrush.class, "e", "erode");
+        brushManager.registerSniperBrush(ErodeBrush.class, "e", "erode");                                       //TODO erode blend ball brush, TODO make individual values available again (not just presets)
         brushManager.registerSniperBrush(ExtrudeBrush.class, "ex", "extrude");
         brushManager.registerSniperBrush(FillDownBrush.class, "fd", "filldown");
         brushManager.registerSniperBrush(FlatOceanBrush.class, "fo", "flatocean");
@@ -174,6 +183,7 @@ public class VoxelSniper extends JavaPlugin
         brushManager.registerSniperBrush(VoxelDiscBrush.class, "vd", "voxeldisc");
         brushManager.registerSniperBrush(VoxelDiscFaceBrush.class, "vdf", "voxeldiscface");
         brushManager.registerSniperBrush(WarpBrush.class, "w", "warp");
+        //TODO Wall Sider brush (from BetterBrushes)
     }
 
 }

@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,6 +77,23 @@ public class VoxelSniperListener implements Listener
 
         return found.onCommand(player, split);
     }
+
+    public List<String> onTabComplete(final Player player, final String[] split, final String command)
+    {
+        VoxelCommand found = this.commands.get(command.toLowerCase());
+        if (found == null)
+        {
+            return null;
+        }
+
+        if (!hasPermission(found, player))
+        {
+            return null;
+        }
+
+        return found.onTabComplete(player, split);
+    }
+
 
     private boolean hasPermission(final VoxelCommand command, final Player player)
     {

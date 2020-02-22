@@ -10,6 +10,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class VoxelInkCommand extends VoxelCommand
 {
     public VoxelInkCommand(final VoxelSniper plugin)
@@ -48,4 +52,31 @@ public class VoxelInkCommand extends VoxelCommand
         snipeData.getVoxelMessage().data();
         return true;
     }
+
+    @Override
+    public List<String> onTabComplete(Player player, String[] args) {
+        Block targetBlock = new RangeBlockHelper(player, player.getWorld()).getTargetBlock();
+        BlockData blockData = targetBlock != null ? targetBlock.getBlockData() : null;
+
+        if (args.length == 0) {
+            if (blockData != null) {
+                return Collections.singletonList(blockData.getAsString(true));
+            } else {
+                return Collections.emptyList();
+            }
+        } else if (args.length == 1) {
+            List<String> result = new ArrayList<>(2);
+            String firstArg = args[0];
+            result.add(firstArg);
+            if (blockData != null) {
+                if (startsWithIgnoreCase(blockData.getAsString(false), firstArg)) {
+                    result.add(blockData.getAsString(true));
+                }
+            }
+            return result;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
 }

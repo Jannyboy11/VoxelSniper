@@ -18,4 +18,5 @@ public class VoxelChunkCommand extends VoxelCommand
         player.getWorld().refreshChunk(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
         return true;
     }
+
 }
