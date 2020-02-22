@@ -3,6 +3,7 @@ package com.thevoxelbox.voxelsniper.brush;
 import com.thevoxelbox.voxelsniper.Message;
 import com.thevoxelbox.voxelsniper.PaintingWrapper;
 import com.thevoxelbox.voxelsniper.SnipeData;
+import org.bukkit.Art;
 
 /**
  * Painting scrolling Brush.
@@ -12,6 +13,8 @@ import com.thevoxelbox.voxelsniper.SnipeData;
  */
 public class PaintingBrush extends Brush
 {
+    private static final Art[] ALL_ART = Art.values();
+
     /**
      *
      */
@@ -28,7 +31,7 @@ public class PaintingBrush extends Brush
     @Override
     protected final void arrow(final SnipeData v)
     {
-        PaintingWrapper.paint(v.owner().getPlayer(), true, false, 0);
+        PaintingWrapper.paint(v.owner().getPlayer(), true, false, ALL_ART[0]);
     }
 
     /**
@@ -39,7 +42,7 @@ public class PaintingBrush extends Brush
     @Override
     protected final void powder(final SnipeData v)
     {
-        PaintingWrapper.paint(v.owner().getPlayer(), true, true, 0);
+        PaintingWrapper.paint(v.owner().getPlayer(), true, true, ALL_ART[0]);
     }
 
     @Override

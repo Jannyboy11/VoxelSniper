@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.bukkit.block.data.BlockData;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Container class for multiple ID/Datavalue pairs.
@@ -76,5 +77,9 @@ public class VoxelList implements Iterable<BlockData>
     @Override
     public Iterator<BlockData> iterator() {
         return valuePairs.iterator();
+    }
+
+    public Stream<? extends BlockData> stream() {
+        return valuePairs.stream();
     }
 }

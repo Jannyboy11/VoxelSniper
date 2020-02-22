@@ -8,6 +8,9 @@ import com.thevoxelbox.voxelsniper.brush.perform.Performer;
 import com.thevoxelbox.voxelsniper.api.command.VoxelCommand;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 
 public class VoxelPerformerCommand extends VoxelCommand
@@ -57,6 +60,23 @@ public class VoxelPerformerCommand extends VoxelCommand
         {
             plugin.getLogger().log(Level.WARNING, "Command error from " + player.getName(), exception);
             return true;
+        }
+    }
+
+    @Override
+    public List<String> onTabComplete(Player player, String[] args) {
+        if (args == null || args.length == 0) {
+            return Collections.singletonList("m");
+        }
+
+        Sniper sniper = plugin.getSniperManager().getSniperForPlayer(player);
+        IBrush currentBrush = sniper.getBrush(sniper.getCurrentToolId());
+
+        if (currentBrush instanceof Performer) {
+            Performer performerBrush = (Performer) currentBrush;
+            return performerBrush.tabComplete(args, sniper.getSnipeData(sniper.getCurrentToolId()));
+        } else {
+            return Collections.emptyList();
         }
     }
 }

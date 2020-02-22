@@ -25,7 +25,7 @@ public abstract class PerformBrush extends Brush implements Performer
     }
 
     @Override
-    public void parse(String[] args, com.thevoxelbox.voxelsniper.SnipeData v)
+    public void parse(String[] args, com.thevoxelbox.voxelsniper.SnipeData snipeData)
     {
         String handle = args[0];
         if (PerformerE.has(handle))
@@ -34,24 +34,24 @@ public abstract class PerformBrush extends Brush implements Performer
             if (p != null)
             {
                 current = p;
-                SniperBrushChangedEvent event = new SniperBrushChangedEvent(v.owner(), v.owner().getCurrentToolId(), this, this);
+                SniperBrushChangedEvent event = new SniperBrushChangedEvent(snipeData.owner(), snipeData.owner().getCurrentToolId(), this, this);
                 Bukkit.getPluginManager().callEvent(event);
-                info(v.getVoxelMessage());
-                current.info(v.getVoxelMessage());
+                info(snipeData.getVoxelMessage());
+                current.info(snipeData.getVoxelMessage());
                 if (args.length > 1)
                 {
                     String[] additionalArguments = Arrays.copyOfRange(args, 1, args.length);
-                    parameters(hackTheArray(additionalArguments), v);
+                    parameters(hackTheArray(additionalArguments), snipeData);
                 }
             }
             else
             {
-                parameters(hackTheArray(args), v);
+                parameters(hackTheArray(args), snipeData);
             }
         }
         else
         {
-            parameters(hackTheArray(args), v);
+            parameters(hackTheArray(args), snipeData);
         }
     }
 

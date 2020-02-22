@@ -5,6 +5,9 @@
 package com.thevoxelbox.voxelsniper.brush.perform;
 
 import com.thevoxelbox.voxelsniper.Message;
+import com.thevoxelbox.voxelsniper.SnipeData;
+
+import java.util.List;
 
 /**
  * @author Voxel
@@ -12,7 +15,12 @@ import com.thevoxelbox.voxelsniper.Message;
 public interface Performer
 {
 
-    public void parse(String[] args, com.thevoxelbox.voxelsniper.SnipeData v);
+    public void parse(String[] args, SnipeData snipeData);
 
     public void showInfo(Message vm);
+
+    public default List<String> tabComplete(String[] args, SnipeData snipeData) {
+        return null;
+    }
+
 }

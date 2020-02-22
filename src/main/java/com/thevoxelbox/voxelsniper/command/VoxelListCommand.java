@@ -10,6 +10,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class VoxelListCommand extends VoxelCommand
 {
     public VoxelListCommand(final VoxelSniper plugin)
@@ -18,8 +24,6 @@ public class VoxelListCommand extends VoxelCommand
         setIdentifier("vl");
         setPermission("voxelsniper.sniper");
     }
-
-    //TODO tabcompletion!!
 
     @Override
     public boolean onCommand(Player player, String[] args)
@@ -55,7 +59,7 @@ public class VoxelListCommand extends VoxelCommand
             if (string.startsWith("-"))
             {
                 remove = true;
-                tmpint = string.replaceAll("-", "");
+                tmpint = string.replace("-", "");
             }
             else
             {
@@ -82,4 +86,41 @@ public class VoxelListCommand extends VoxelCommand
         }
         return true;
     }
+
+    @Override
+    public List<String> onTabComplete(Player player, String[] args)
+    {
+        Sniper sniper = plugin.getSniperManager().getSniperForPlayer(player);
+        SnipeData snipeData = sniper.getSnipeData(sniper.getCurrentToolId());
+
+        if (args.length == 0) {
+            List<String> result = new ArrayList<>();
+            result.add("clear");
+            if (snipeData != null) {
+                result.addAll(snipeData.getVoxelList().stream()
+                    .map(blockData -> blockData.getAsString(true))
+                    .collect(Collectors.toList()));
+            }
+            return result;
+        } else if (args.length == 1) {
+            List<String> result = new ArrayList<>();
+            String firstArg = args[0];
+            if (startsWithIgnoreCase("clear", firstArg)) result.add("clear");
+            if (snipeData != null) {
+                boolean startsWithDash = firstArg.startsWith("-");
+                for (BlockData blockData : snipeData.getVoxelList()) {
+                    String asString = blockData.getAsString(true);
+                    String completedValue = (startsWithDash ? "-" : "") + asString;
+                    if (startsWithIgnoreCase(completedValue, firstArg)) {
+                        result.add(asString);
+                        result.add("-" + asString);
+                    }
+                }
+            }
+            return result;
+        }
+
+        return Collections.emptyList();
+    }
+
 }

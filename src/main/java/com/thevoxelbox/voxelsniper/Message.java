@@ -85,9 +85,8 @@ public class Message
     }
 
     /**
-     * Displaye replace material.
+     * Display replace material.
      */
-    @SuppressWarnings("deprecation")
     public void replace()
     {
         snipeData.sendMessage(ChatColor.AQUA + "Replace Material: " + ChatColor.RED + snipeData.getReplaceId());

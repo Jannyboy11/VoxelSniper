@@ -12,10 +12,14 @@ import com.thevoxelbox.voxelsniper.brush.perform.PerformerE;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VoxelSniperCommand extends VoxelCommand
 {
+    private static final String[] SUB_COMMANDS = new String[] {"brushes", "range", "perf", "perflong", "enable", "disable", "toggle"};
 
     public VoxelSniperCommand(final VoxelSniper plugin)
     {
@@ -108,4 +112,37 @@ public class VoxelSniperCommand extends VoxelCommand
         sniper.displayInfo();
         return true;
     }
+
+    @Override
+    public List<String> onTabComplete(Player player, String[] args) {
+
+        if (args.length == 0 || (args.length == 1 && args[0].isEmpty())) {
+            return Arrays.asList(SUB_COMMANDS);
+        }
+
+        String firstArg = args[0];
+        if (args.length == 1) {
+            return Arrays.stream(SUB_COMMANDS)
+                    .filter(sub -> startsWithIgnoreCase(sub, firstArg))
+                    .collect(Collectors.toList());
+        }
+
+        String secondArg = args[1];
+        if (args.length == 2 && "range".equalsIgnoreCase(firstArg)) {
+            if (secondArg.isEmpty()) {
+                //I don't know what good range values are...
+                return Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+            } else {
+                try {
+                    int range = Integer.parseInt(secondArg);
+                    return Arrays.asList(secondArg, range + "0", range + "00");
+                } catch (NumberFormatException e) {
+                    return Collections.singletonList(secondArg);
+                }
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
 }

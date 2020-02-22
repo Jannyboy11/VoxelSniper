@@ -4,13 +4,12 @@ import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
+import java.util.Locale;
 
 /**
  * Painting state change handler.
@@ -19,6 +18,7 @@ import java.util.Set;
  */
 public final class PaintingWrapper
 {
+    private static final Art[] ALL_ART = Art.values();
 
     private PaintingWrapper()
     {
@@ -37,9 +37,10 @@ public final class PaintingWrapper
      * @param choice
      *         Chosen index to set the painting to
      */
-    @SuppressWarnings("deprecation")
-    public static void paint(final Player p, final boolean auto, final boolean back, final int choice)
+    public static void paint(final Player p, final boolean auto, final boolean back, final Art choice)
     {
+
+
         Location targetLocation = p.getTargetBlock(null, 4).getLocation();
         Chunk paintingChunk = p.getTargetBlock(null, 4).getLocation().getChunk();
 
@@ -64,39 +65,23 @@ public final class PaintingWrapper
         {
             if (auto)
             {
-                try
-                {
-                    final int i = bestMatch.getArt().getId() + (back ? -1 : 1) + Art.values().length % Art.values().length;
-                    Art art = Art.getById(i);
+                Art bestMatchArt = bestMatch.getArt();
+                int ordinal = bestMatchArt.ordinal() + (back ? -1 : 1) % ALL_ART.length;
+                if (ordinal < 0) ordinal += ALL_ART.length;
+                final Art art = ALL_ART[ordinal];
 
-                    if (art == null)
-                    {
-                        p.sendMessage(ChatColor.RED + "This is the final painting, try scrolling to the other direction.");
-                        return;
-                    }
-
-                    bestMatch.setArt(art);
-                    p.sendMessage(ChatColor.GREEN + "Painting set to ID: " + (i));
-                }
-                catch (final Exception e)
-                {
-                    p.sendMessage(ChatColor.RED + "Oops. Something went wrong.");
-                }
+                bestMatch.setArt(art);
+                p.sendMessage(ChatColor.GREEN + "Painting set to ID: " + (art.toString().toLowerCase(Locale.ENGLISH)));
             }
             else
             {
-                try
-                {
-                    Art art = Art.getById(choice);
+                Art art = choice;
 
-                    bestMatch.setArt(art);
-                    p.sendMessage(ChatColor.GREEN + "Painting set to ID: " + choice);
-                }
-                catch (final Exception exception)
-                {
-                    p.sendMessage(ChatColor.RED + "Your input was invalid somewhere.");
-                }
+                bestMatch.setArt(art);
+                p.sendMessage(ChatColor.GREEN + "Painting set to ID: " + choice);
             }
         }
+
+        //what if there is no match? well, then just nothing happens I guess :-)
     }
 }

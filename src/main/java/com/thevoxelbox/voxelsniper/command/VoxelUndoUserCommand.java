@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
+import java.util.List;
+
 public class VoxelUndoUserCommand extends VoxelCommand
 {
     public VoxelUndoUserCommand(final VoxelSniper plugin)
@@ -27,6 +30,15 @@ public class VoxelUndoUserCommand extends VoxelCommand
         {
             player.sendMessage(ChatColor.GREEN + "Player not found.");
             return true;
+        }
+    }
+
+    @Override
+    public List<String> onTabComplete(Player plyaer, String[] args) {
+        if (args.length <= 1) {
+            return null; //tabcomplete players
+        } else {
+            return Collections.emptyList();
         }
     }
 }
