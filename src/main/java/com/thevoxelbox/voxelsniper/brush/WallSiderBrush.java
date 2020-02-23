@@ -23,7 +23,7 @@ public class WallSiderBrush extends Brush {
         setName("Wall Sider");
     }
 
-    private static Orientation getDirection(Player player) {
+    private static Orientation getOrientation(Player player) {
         double angle = (player.getLocation().getYaw() - 90.0F) % 360.0F;
         if (angle < 0.0D) {
             angle += 360.0D;
@@ -39,11 +39,11 @@ public class WallSiderBrush extends Brush {
             return Orientation.EAST;
         } else if (315.0D >= angle && angle < 360.0D) {
             return Orientation.SOUTH;
-        } else {
-            throw new RuntimeException("impossible player direction");
+        } else  {
+            //if we get here, assume an angle of 360, but didn't get caught in the other arms because of floating point precision*/
+            return Orientation.SOUTH;
         }
     }
-
 
     private void sideWall(SnipeData snipeData, Block block, boolean opposite) {
         double brushSizeSquared = (snipeData.getBrushSize() + this.center) * (snipeData.getBrushSize() + this.center);
@@ -51,7 +51,7 @@ public class WallSiderBrush extends Brush {
         Vector vectorClone = vector.clone();
         Orientation orientation = this.defaultOrientation;
         if (orientation == Orientation.RELATIVE_TO_PLAYER) {
-            orientation = getDirection(snipeData.owner().getPlayer());
+            orientation = getOrientation(snipeData.owner().getPlayer());
         }
 
         if (opposite) {
@@ -147,11 +147,11 @@ public class WallSiderBrush extends Brush {
             } else {
                 try {
                     this.defaultOrientation = Orientation.valueOf(argLowerCase.replace("s", "").toUpperCase());
+                    snipeData.sendMessage(ChatColor.AQUA + "Orientation set to " + defaultOrientation);
                 } catch (IllegalArgumentException e) {
                     this.defaultOrientation = Orientation.RELATIVE_TO_PLAYER;
+                    snipeData.sendMessage(ChatColor.RED + "Invalid Orientation, choose one of: [NORTH, EAST, SOUTH, WEST].");
                 }
-
-                snipeData.sendMessage(ChatColor.AQUA + "Orientation set to " + defaultOrientation);
             }
         }
 
