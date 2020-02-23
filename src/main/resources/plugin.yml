@@ -107,6 +107,7 @@ commands:
             /<command> -- Prints out command usage information.
   vchunk:
     description: Update the chunk you are standing in.
+    permission: voxelsniper.sniper
     usage: |
            /<command>
            Example: /<command> -- Loads the chunk you're standing in.
