@@ -80,7 +80,7 @@ public abstract class VoxelCommand
         return returnValue;
     }
 
-    protected static boolean startsWithIgnoreCase(String argument, String prefix)
+    public static boolean startsWithIgnoreCase(String argument, String prefix)
     {
         return argument.regionMatches(true, 0, prefix, 0, prefix.length());
     }

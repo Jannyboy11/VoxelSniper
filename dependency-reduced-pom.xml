@@ -4,7 +4,7 @@
   <groupId>com.thevoxelbox</groupId>
   <artifactId>VoxelSniper</artifactId>
   <name>VoxelSniper</name>
-  <version>5.171.1-SNAPSHOT</version>
+  <version>5.171.2-SNAPSHOT</version>
   <description>World editing from ingame using 3D brushes.</description>
   <url>http://www.voxelwiki.com/minecraft/VoxelSniper</url>
   <scm>

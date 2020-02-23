@@ -28,7 +28,7 @@ public class Materials
         if (Tag.WOODEN_PRESSURE_PLATES.isTagged(id)) return true;
         if (Tag.BEDS.isTagged(id)) return true;
         //BUKKIT WHY ARE CHORALS NOT IN THE TAG API YET? //TODO PR @ SpigotMC stash?
-        Tag<Material> choralPlants = Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("chorals"), Material.class);
+        Tag<Material> choralPlants = Bukkit.getTag(Tag.REGISTRY_BLOCKS, NamespacedKey.minecraft("corals"), Material.class);
         if (choralPlants.isTagged(id)) return true;
 
         switch (id)

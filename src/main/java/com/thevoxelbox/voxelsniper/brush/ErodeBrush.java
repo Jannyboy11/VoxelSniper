@@ -20,11 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * http://www.voxelwiki.com/minecraft/VoxelSniper#The_Erosion_Brush
@@ -53,8 +49,9 @@ public class ErodeBrush extends Brush
             this.parser.registerParameter(new FlaggedOption("fillrecursion", NullableIntegerStringParser.getParser(), null, false, 'F', "fillrecursion", "Repeated fill iterations."));
             this.parser.registerParameter(new FlaggedOption("eroderecursion", NullableIntegerStringParser.getParser(), null, false, 'E', "eroderecursion", "Repeated erode iterations."));
         }
-        catch (JSAPException ignored)
+        catch (JSAPException parseException)
         {
+            parseException.printStackTrace();
         }
     }
 
@@ -305,12 +302,18 @@ public class ErodeBrush extends Brush
         }
     }
 
+    @Override
+    public List<String> tabComplete(String[] args, SnipeData snipeData) {
+
+
+        return null;
+    }
+
     /**
      * @author MikeMatrix
      */
     private enum Preset
     {
-        //TODO make individual values available
         MELT(new ErosionPreset(2, 1, 5, 1)),
         FILL(new ErosionPreset(5, 1, 2, 1)),
         SMOOTH(new ErosionPreset(3, 1, 3, 1)),
@@ -332,22 +335,12 @@ public class ErodeBrush extends Brush
          */
         public static String getValuesString(String seperator)
         {
-            String valuesString = "";
-
-            boolean delimiterHelper = true;
+            StringJoiner stringJoiner = new StringJoiner(seperator);
             for (final Preset preset : Preset.values())
             {
-                if (delimiterHelper)
-                {
-                    delimiterHelper = false;
-                }
-                else
-                {
-                    valuesString += seperator;
-                }
-                valuesString += preset.name();
+                stringJoiner.add(preset.name());
             }
-            return valuesString;
+            return stringJoiner.toString();
         }
 
         public ErosionPreset getPreset()

@@ -83,4 +83,14 @@ public abstract class PerformBrush extends Brush implements Performer
     {
         current.info(vm);
     }
+
+    @Override
+    public void info(Message vm) {
+
+    }
+
+    @Override
+    public String getPermissionNode() {
+        return null;
+    }
 }

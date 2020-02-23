@@ -34,7 +34,7 @@ public interface IBrush
         v.sendMessage(ChatColor.RED + "This brush does not accept additional parameters.");
     }
 
-    public default List<String> tabcompleteParameters(final String[] par, final SnipeData v) {
+    public default List<String> tabComplete(final String[] args, final SnipeData v) {
         return null;
     }
 

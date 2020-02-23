@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class VoxelBrushCommand extends VoxelCommand
 {
@@ -98,7 +97,7 @@ public class VoxelBrushCommand extends VoxelCommand
     @Override
     public List<String> onTabComplete(Player player, String[] args)
     {
-        if (args.length == 0) return Collections.emptyList();
+        if (args.length == 0) return Collections.emptyList(); //is this even reachable?
 
         String firstArg = args[0];
         if (firstArg.isEmpty())
@@ -107,23 +106,28 @@ public class VoxelBrushCommand extends VoxelCommand
         }
 
         if (args.length == 1) {
+            List<String> result = new ArrayList<>();
+
             try {
                 int parsed = Integer.parseInt(firstArg);
-                List<String> result = new ArrayList<>();
                 result.add("" + parsed);
                 for (int i = 1; i < 1024; i *= 2) {
                     result.add("" + (parsed + i));
                 }
-                return result;
             } catch (NumberFormatException e) {
                 //first argument not a number - just continue
             }
 
             Brushes brushManager = plugin.getBrushManager();
             Collection<String> brushHandles = brushManager.getRegisteredBrushesMultimap().values();
-            return brushHandles.stream()
-                    .filter(handle -> handle.regionMatches(true, 0, firstArg, 0, firstArg.length()))
-                    .collect(Collectors.toList());
+
+            for (String brushHandle : brushHandles) {
+                if (startsWithIgnoreCase(brushHandle, firstArg)) {
+                    result.add(brushHandle);
+                }
+            }
+
+            return result;
         } else {
             Sniper sniper = plugin.getSniperManager().getSniperForPlayer(player);
             String currentToolId = sniper.getCurrentToolId();
@@ -131,17 +135,14 @@ public class VoxelBrushCommand extends VoxelCommand
 
             IBrush currentBrush = sniper.getBrush(currentToolId);
             String[] parameters = Arrays.copyOfRange(args, 1, args.length);
-            //TODO wtf does a Performer do?
-//            if (currentBrush instanceof Performer)
-//            {
-//                //return ((Performer) currentBrush).completeParameters(parameters, snipeData);
-//                ((Performer) currentBrush).parse(parameters, snipeData);
-//                return true;
-//            }
-//            else
+            if (currentBrush instanceof Performer)
             {
-                parameters = hackTheArray(parameters);
-                return currentBrush.tabcompleteParameters(parameters, snipeData);
+                return ((Performer) currentBrush).tabComplete(parameters, snipeData);
+            }
+            else
+            {
+                parameters = hackTheArray(hackTheArray(parameters));
+                return currentBrush.tabComplete(parameters, snipeData);
             }
         }
     }
