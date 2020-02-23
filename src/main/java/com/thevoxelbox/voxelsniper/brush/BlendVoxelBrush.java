@@ -6,6 +6,7 @@ import com.thevoxelbox.voxelsniper.Undo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.ListIterator;
 import java.util.Map;
@@ -66,9 +67,6 @@ public class BlendVoxelBrush extends BlendBrushBase
                 for (int z = 0; z <= brushSizeDoubled; z++)
                 {
                     final Map<Material, Integer> materialFrequency = new EnumMap<>(Material.class);
-                    int modeMatCount = 0;
-                    Material modeMatId = Material.AIR;
-                    boolean tiecheck = true;
 
                     for (int m = -1; m <= 1; m++)
                     {
@@ -78,36 +76,23 @@ public class BlendVoxelBrush extends BlendBrushBase
                             {
                                 if (!(m == 0 && n == 0 && o == 0))
                                 {
-                                    materialFrequency.compute(oldMaterials[x + 1 + m][y + 1 + n][z + 1 + o], (mat, i) -> i == null ? 1 : i + 1);
+                                    Material oldMaterial = oldMaterials[x + 1 + m][y + 1 + n][z + 1 + o];
+                                    if (excludeAir && oldMaterial.isAir()) continue;
+                                    if (excludeWater && oldMaterial == Material.WATER) continue;
+                                    if (!oldMaterial.isBlock()) continue; //should always be true tho.
+                                    materialFrequency.compute(oldMaterial, (oldMat, i) -> i == null ? 1 : i + 1);
                                 }
                             }
                         }
                     }
 
-                    // Find most common neighboring material.
-                    Material i = null;
-                    for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext(); i = it.next());
-                    {
-                        if (materialFrequency.getOrDefault(i, 0) > modeMatCount && !(this.excludeAir && i.isAir()) && !(this.excludeWater && (i == Material.WATER)))
-                        {
-                            modeMatCount = materialFrequency.get(i);
-                            modeMatId = i;
-                        }
-                    }
-                    // Make sure there'world not a tie for most common
-                    for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext() && i.ordinal() < modeMatId.ordinal(); i = it.next())
-                    {
-                        if (materialFrequency.getOrDefault(i, 0) == modeMatCount && !(this.excludeAir && i.isAir()) && !(this.excludeWater && (i == Material.WATER)))
-                        {
-                            tiecheck = false;
-                        }
-                    }
+                    Material modeMatId = materialFrequency.entrySet()
+                            .stream()
+                            .max(Comparator.comparing(Map.Entry::getValue))
+                            .map(Map.Entry::getKey)
+                            .orElse(Material.AIR);
 
-                    // Record most common neighbor material for this block
-                    if (tiecheck)
-                    {
-                        newMaterials[x][y][z] = modeMatId;
-                    }
+                    newMaterials[x][y][z] = modeMatId;
                 }
             }
         }

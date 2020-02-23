@@ -99,13 +99,17 @@ public class VoxelBrushCommand extends VoxelCommand
     {
         if (args.length == 0) return Collections.emptyList(); //is this even reachable?
 
-        String firstArg = args[0];
-        if (firstArg.isEmpty())
-        {
-            return Arrays.asList("3", "5", "10", "15", "25", "40", "65");
-        }
+        Brushes brushManager = plugin.getBrushManager();
+        Collection<String> brushHandles = brushManager.getRegisteredBrushesMultimap().values();
 
-        if (args.length == 1) {
+        String firstArg = args[0];
+        if (args.length == 1 && firstArg.isEmpty())
+        {
+            List<String> result = new ArrayList<>();
+            result.addAll(Arrays.asList("3", "5", "10", "15", "25", "40", "65"));
+            result.addAll(brushHandles);
+            return result;
+        } else if (args.length == 1) {
             List<String> result = new ArrayList<>();
 
             try {
@@ -117,9 +121,6 @@ public class VoxelBrushCommand extends VoxelCommand
             } catch (NumberFormatException e) {
                 //first argument not a number - just continue
             }
-
-            Brushes brushManager = plugin.getBrushManager();
-            Collection<String> brushHandles = brushManager.getRegisteredBrushesMultimap().values();
 
             for (String brushHandle : brushHandles) {
                 if (startsWithIgnoreCase(brushHandle, firstArg)) {
@@ -135,12 +136,10 @@ public class VoxelBrushCommand extends VoxelCommand
 
             IBrush currentBrush = sniper.getBrush(currentToolId);
             String[] parameters = Arrays.copyOfRange(args, 1, args.length);
-            if (currentBrush instanceof Performer)
-            {
-                return ((Performer) currentBrush).tabComplete(parameters, snipeData);
-            }
-            else
-            {
+
+            if (currentBrush instanceof Performer) {
+                return currentBrush.tabComplete(parameters, snipeData);
+            } else {
                 parameters = hackTheArray(hackTheArray(parameters));
                 return currentBrush.tabComplete(parameters, snipeData);
             }

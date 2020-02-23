@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 @SuppressWarnings("deprecation")
 public abstract class BlendBrushBase extends Brush
 {
-    static final ArrayList<Material> blocks = Arrays.stream(Material.values()).filter(Material::isBlock).collect(Collectors.toCollection(ArrayList::new));
+    static final ArrayList<Material> blocks = Arrays.stream(Material.values())
+            .filter(Material::isBlock)
+            .collect(Collectors.toCollection(ArrayList::new));
 
     protected boolean excludeAir = true;
     protected boolean excludeWater = true;

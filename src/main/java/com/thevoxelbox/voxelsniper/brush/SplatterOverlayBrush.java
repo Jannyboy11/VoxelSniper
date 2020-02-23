@@ -138,7 +138,7 @@ public class SplatterOverlayBrush extends PerformBrush
                                     {   // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
                                         //TODO I don't think this list is complete. is there a better way to obtain these materials?
                                         case STONE:                 //case 1:     //stone
-                                        case GRASS:                 //case 2:     //grass
+                                        case GRASS_BLOCK:                 //case 2:     //grass
                                         case DIRT:                  //case 3:     //dirt
                                         case SAND:                  //case 12:    //sand
                                         case GRAVEL:                //case 13:    //gravel
@@ -283,7 +283,7 @@ public class SplatterOverlayBrush extends PerformBrush
                                         { // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
                                             //TODO incomplete
                                             case STONE:                 //case 1:
-                                            case GRASS:                 //case 2:
+                                            case GRASS_BLOCK:                 //case 2:
                                             case DIRT:                  //case 3:
                                             case SAND:                  //case 12:
                                             case GRAVEL:                //case 13:

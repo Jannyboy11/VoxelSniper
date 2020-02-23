@@ -36,10 +36,10 @@ commands:
     usage: |
            /<command>
            Example: /<command> -- Resets the brush settings to their default values.
-  p:
+  performer:
     description: Voxelsniper performer.
     permission: voxelsniper.sniper
-    aliases: [perf, performer]
+    aliases: [perf, p]
     usage: |
            /<command>
            Example: /<command> -- Sets the performer of the current brush to "m".
@@ -64,23 +64,23 @@ commands:
            /<command> [voxel-height]
            Example: /<command> -- Sets the brush height.
   vi:
-    description: VoxelInk (Data Value).
+    description: VoxelInk (BlockData).
     permission: voxelsniper.sniper
     usage: |
-           /<command> [0-16]
-           Example: /<command> -- sets a data value of 6 (e.g. pink wool).
+           /<command> [blockdata]
+           Example: /<command> minecraft:oak_leaves[persistent=true] -- sets a data value of persistent=true
   vr:
     description: VoxelReplace.
     permission: voxelsniper.sniper
     usage: |
-           /<command> [0-159]
-           Example: /<command> 12 -- Sets a replace brush to select sand blocks for replacement.
+           /<command> [block material]
+           Example: /<command> sand -- Sets a replace brush to select sand blocks for replacement.
   vl:
     description: VoxelBlockExclusion list
     permission: voxelsniper.sniper
     usage: |
       /<command>
-      Example: /<command> 89 -5 -- Adds glowstone to the voxel list and removes planks from the voxel list.
+      Example: /<command> glowstone -oak_planks -- Adds glowstone to the voxel list and removes planks from the voxel list.
   vir:
     description: VoxelInkReplace.
     permission: voxelsniper.sniper
@@ -91,8 +91,8 @@ commands:
     description: Voxel input.
     permission: voxelsniper.sniper
     usage: |
-           /<command> [0-159]
-           Example: /<command> 1 -- Loads the sniper with Stone blocks.
+           /<command> [material]
+           Example: /<command> stone -- Loads the sniper with Stone blocks.
   b:
     description: Brush.
     permission: voxelsniper.sniper

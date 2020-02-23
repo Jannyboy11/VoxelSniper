@@ -84,7 +84,7 @@ public class OverlayBrush extends PerformBrush
         switch (materialId)
         {
             case STONE:                 //case 1:
-            case GRASS:                 //case 2:
+            case GRASS_BLOCK:                 //case 2:
             case DIRT:                  //case 3:
             case SAND:                  //case 12:
             case GRAVEL:                //case 13:
@@ -129,7 +129,7 @@ public class OverlayBrush extends PerformBrush
                                         {
                                             //TODO WTF are these IDs?
                                             case STONE:             //case 1:
-                                            case GRASS:             //case 2:
+                                            case GRASS_BLOCK:             //case 2:
                                             case DIRT:              //case 3:
                                             case SAND:              //case 12:
                                             case GRAVEL:            //case 13:

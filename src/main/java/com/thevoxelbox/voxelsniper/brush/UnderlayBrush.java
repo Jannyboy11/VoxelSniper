@@ -47,7 +47,7 @@ public class UnderlayBrush extends PerformBrush
                                 // These cases filter out any manufactured or refined blocks, any trees and leas, etc. that you don't want to mess with.
                                 {   //TODO this is probably incomplete
                                     case STONE:             //case 1:
-                                    case GRASS:             //case 2:
+                                    case GRASS_BLOCK:             //case 2:
                                     case DIRT:              //case 3:
                                     case SAND:              // case 12:
                                     case GRAVEL:            //case 13:
@@ -115,7 +115,7 @@ public class UnderlayBrush extends PerformBrush
                                 switch (this.getBlockIdAt(this.getTargetBlock().getX() + x, y, this.getTargetBlock().getZ() + z))
                                 {   //TODO SERIOUSLY? AGAIN?!
                                     case STONE:                 //case 1:
-                                    case GRASS:                 //case 2:
+                                    case GRASS_BLOCK:                 //case 2:
                                     case DIRT:                  //case 3:
                                     case SAND:                  //case 12:
                                     case GRAVEL:                //case 13:

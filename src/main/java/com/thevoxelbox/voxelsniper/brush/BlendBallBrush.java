@@ -6,9 +6,8 @@ import com.thevoxelbox.voxelsniper.Undo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
+import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 
 /**
@@ -59,7 +58,7 @@ public class BlendBallBrush extends BlendBrushBase
             }
         }
 
-        // Blend materials //TODO un-duplicate this. share code with other brushes
+        // Blend materials
         for (int x = 0; x <= brushSizeDoubled; x++)
         {
             for (int y = 0; y <= brushSizeDoubled; y++)
@@ -67,9 +66,7 @@ public class BlendBallBrush extends BlendBrushBase
                 for (int z = 0; z <= brushSizeDoubled; z++)
                 {
                     final Map<Material, Integer> materialFrequency = new EnumMap<>(Material.class);
-                    int modeMatCount = 0;
-                    Material modeMatId = Material.AIR;
-                    boolean tiecheck = true;
+                    //Material modeMatId = Material.AIR;
 
                     for (int m = -1; m <= 1; m++)
                     {
@@ -79,36 +76,23 @@ public class BlendBallBrush extends BlendBrushBase
                             {
                                 if (!(m == 0 && n == 0 && o == 0))
                                 {
-                                    materialFrequency.compute(oldMaterials[x + 1 + m][y + 1 + n][z + 1 + o], (mat, i) -> i == null ? 1 : i + 1);
+                                    Material oldMaterial = oldMaterials[x + 1 + m][y + 1 + n][z + 1 + o];
+                                    if (excludeAir && oldMaterial.isAir()) continue;
+                                    if (excludeWater && oldMaterial == Material.WATER) continue;
+                                    if (!oldMaterial.isBlock()) continue; //should always be true tho.
+                                    materialFrequency.compute(oldMaterial, (oldMat, i) -> i == null ? 1 : i + 1);
                                 }
                             }
                         }
                     }
 
-                    // Find most common neighboring material.
-                    Material i = null;
-                    for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext(); i = it.next());
-                    {
-                        if (materialFrequency.getOrDefault(i, 0) > modeMatCount && !(this.excludeAir && i.isAir()) && !(this.excludeWater && (i == Material.WATER)))
-                        {
-                            modeMatCount = materialFrequency.get(i);
-                            modeMatId = i;
-                        }
-                    }
-                    // Make sure there'world not a tie for most common
-                    for (ListIterator<Material> it = BlendBrushBase.getBlockIterator(); it.hasNext() && i.ordinal() < modeMatId.ordinal(); i = it.next())
-                    {
-                        if (materialFrequency.getOrDefault(i, 0) == modeMatCount && !(this.excludeAir && i.isAir()) && !(this.excludeWater && (i == Material.WATER)))
-                        {
-                            tiecheck = false;
-                        }
-                    }
+                    Material modeMatId = materialFrequency.entrySet()
+                            .stream()
+                            .max(Comparator.comparing(Map.Entry::getValue))
+                            .map(Map.Entry::getKey)
+                            .orElse(Material.AIR);
 
-                    // Record most common neighbor material for this block
-                    if (tiecheck)
-                    {
-                        newMaterials[x][y][z] = modeMatId;
-                    }
+                    newMaterials[x][y][z] = modeMatId;
                 }
             }
         }
@@ -127,9 +111,12 @@ public class BlendBallBrush extends BlendBrushBase
 
                 for (int z = brushSizeDoubled; z >= 0; z--)
                 {
-                    if (xSquared + ySquared + Math.pow(z - brushSize - 1, 2) <= rSquared)
+                    final double zSquared = Math.pow(z - brushSize - 1, 2);
+
+                    if (xSquared + ySquared + zSquared <= rSquared)
                     {
-                        if (!(this.excludeAir && newMaterials[x][y][z].isAir()) && !(this.excludeWater && (newMaterials[x][y][z] == Material.WATER)))
+                        if (!(this.excludeAir && newMaterials[x][y][z].isAir())
+                                && !(this.excludeWater && (newMaterials[x][y][z] == Material.WATER)))
                         {
                             if (this.getBlockIdAt(this.getTargetBlock().getX() - brushSize + x, this.getTargetBlock().getY() - brushSize + y, this.getTargetBlock().getZ() - brushSize + z) != newMaterials[x][y][z])
                             {
@@ -154,7 +141,7 @@ public class BlendBallBrush extends BlendBrushBase
             return;
         }
 
-        super.parameters(par, v);
+        super.parameters(par, v); //toggles water
     }
 
     @Override
