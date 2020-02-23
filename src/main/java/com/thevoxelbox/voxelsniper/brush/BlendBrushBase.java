@@ -8,7 +8,6 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("deprecation")
 public abstract class BlendBrushBase extends Brush
 {
-    static final ArrayList<Material> blocks = Arrays.stream(Material.values())
+    //used by the old duplication checking algorithm..
+    private static final ArrayList<Material> blocks = Arrays.stream(Material.values())
             .filter(Material::isBlock)
             .collect(Collectors.toCollection(ArrayList::new));
 
